@@ -325,7 +325,7 @@ export  default  class Me extends Component {
 
 }
 const header = {
-    backgroundColor: '#C7272F',
+    backgroundColor: '#f60',
     ...ifIphoneX({
         paddingTop: 44,
         height: 88

@@ -1,9 +1,11 @@
 package com.toutiao;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.facebook.react.ReactApplication;
-import com.theweflex.react.WeChatPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.theweflex.react.WeChatPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -14,7 +16,6 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.theweflex.react.WeChatPackage;
 import com.umeng.commonsdk.UMConfigure;
 
 import java.util.Arrays;
@@ -45,6 +46,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNDeviceInfo(),
             new VectorIconsPackage(),
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),
@@ -78,4 +80,9 @@ public class MainApplication extends Application implements ReactApplication {
     UMConfigure.setEncryptEnabled(true);
   }
 
+  @Override
+  protected void attachBaseContext(Context base) {
+    super.attachBaseContext(base);
+    MultiDex.install(this);
+  }
 }
