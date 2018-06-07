@@ -138,6 +138,7 @@ export  default  class Detail extends Component {
                 if (type === 'Session') {
                     WeChat.shareToSession({
                         imageUrl: this.state.data && this.state.data.nurl,
+                        titlepicUrl: this.state.data && this.state.data.titlepic,
                         type: 'imageUrl',
                         webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
                     }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((e) => {
@@ -193,6 +194,7 @@ export  default  class Detail extends Component {
                     if (data.wechat === 1) {
                         WeChat.shareToSession({
                             imageUrl: this.state.data && this.state.data.nurl,
+                            titlepicUrl: this.state.data && this.state.data.titlepic,
                             type: 'imageUrl',
                             webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
                         }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
@@ -203,6 +205,7 @@ export  default  class Detail extends Component {
                     } else if (data.wechat === 2) {
                         WeChat.shareToSession({
                             imageUrl: this.state.data && this.state.data.nurl,
+                            titlepicUrl: this.state.data && this.state.data.titlepic,
                             type: 'imageUrl',
                             webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
                         }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
