@@ -53,13 +53,13 @@ export  default  class Me extends Component {
     static navigationOptions = {
         tabBarLabel: '设置',
         tabBarIcon: ({tintColor,focused}) => (
-            <IconSimple name="settings" size={22} color={focused ? "#255af6":'black'} />
+            <IconSimple name="settings" size={22} color={focused ? "#f60":'black'} />
         ),
         header: ({navigation}) => {
             return (
                 <ImageBackground style={{ ...header }} source={require('../../assets/backgroundImageHeader.png')} resizeMode='cover'>
                     <View style={{justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7}}></View>
-                    <Text style={{fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: 'white'}}>个人中心</Text>
+                    <Text style={{fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: 'white'}}>设置中心</Text>
                     <View style={{justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7}}></View>
                 </ImageBackground>
             )

@@ -58,7 +58,7 @@ export  default  class ScrollTabView extends Component {
     static navigationOptions = {
         tabBarLabel: '最新',
         tabBarIcon: ({tintColor,focused}) => (
-            <IconSimple name="fire" size={22} color={focused ? "#255af6":'black'} />
+            <IconSimple name="fire" size={22} color={focused ? "#f60":'black'} />
         ),
         header: ({navigation}) => {
             return (
@@ -67,10 +67,10 @@ export  default  class ScrollTabView extends Component {
                         navigation.state.routes[0].routes[0].params.leftFuc && navigation.state.routes[0].routes[0].params.leftFuc();
                     }}>
                         <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
-                            
+                            <MaterialIcons name="search" size={25} color='white' />
                         </View>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: 'white' }}>表情宝库</Text>
+                    <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: 'white' }}>斗图表情宝库</Text>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                         navigation.state.routes[0].routes[0].params.rightFuc && navigation.state.routes[0].routes[0].params.rightFuc();
                     }}>
@@ -381,7 +381,7 @@ export  default  class ScrollTabView extends Component {
                 }
             })
 
-            return <ScrollableTabBar activeTextColor='#255af6' underlineStyle={{height: 0,width:0}}
+            return <ScrollableTabBar activeTextColor='#f60' underlineStyle={{height: 0,width:0}}
                                      backgroundColor='white' textStyle={{fontSize: 16, fontWeight:'100'}}
                                      tabStyle={{paddingLeft: 10, paddingRight: 10}} />;
         }

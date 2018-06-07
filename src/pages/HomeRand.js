@@ -368,7 +368,7 @@ export default class Home extends Component {
                                         this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
                                     }}
                                     hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                                    <Text style={{ color: '#255af6' }}>查看详情 >></Text>
+                                    <Text style={{ color: '#f60' }}>查看详情 >></Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={{ flexDirection: 'row' }}>

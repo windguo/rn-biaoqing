@@ -55,7 +55,7 @@ export  default  class ScrollTabView extends Component {
     static navigationOptions = {
         tabBarLabel: '随机',
         tabBarIcon: ({tintColor,focused}) => (
-            <IconSimple name="shuffle" size={22} color={focused ? "#255af6":'black'} />
+            <IconSimple name="shuffle" size={22} color={focused ? "#f60":'black'} />
         ),
         header: ({navigation}) => {
             return (
@@ -230,7 +230,7 @@ export  default  class ScrollTabView extends Component {
                 }
             })
 
-            return <ScrollableTabBar activeTextColor='#255af6' underlineStyle={{height: 0,width:0}}
+            return <ScrollableTabBar activeTextColor='#f60' underlineStyle={{height: 0,width:0}}
                                      backgroundColor='white' textStyle={{fontSize: 16, fontWeight:'100'}}
                                      tabStyle={{paddingLeft: 10, paddingRight: 10}} />;
         }

@@ -31,6 +31,7 @@ import {
     LayoutAnimation,
     NativeModules,
     ImageBackground,
+    CameraRoll,
     FlatList
 } from 'react-native';
 import { ifIphoneX } from '../utils/iphoneX';
@@ -90,6 +91,18 @@ export  default  class Detail extends Component {
         });
         console.log('res', res);
     };
+
+    //保存图片
+    saveImg(img) {
+        var promise = CameraRoll.saveToCameraRoll(img);
+        promise.then(function (result) {
+            alert('保存成功,请到相册查看。');
+        }).catch(function (error) {
+            alert('保存失败！\n' + error);
+        });
+    }
+    _keyExtractor = (item, index) => index;
+
     loadDataRand = async (resolve) => {
         // alert('111');
         let url = urlConfig.sectionListData + '&classid=0';
@@ -260,6 +273,16 @@ export  default  class Detail extends Component {
                             <View style={styles.shareContent}>
                                 <IconSimple name="exclamation" size={40} color='black' />
                                 <Text style={styles.spinnerTitle}>举报</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={this.saveImg.bind(this, this.state.data.nurl)} 
+                            hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }} 
+                            style={{ flexDirection: 'row', marginLeft: 10 }}
+                        >
+                            <View style={styles.shareContent}>
+                                <IconSimple name="cloud-download" size={40} color='black' />
+                                <Text style={styles.spinnerTitle}>保存到相册</Text>
                             </View>
                         </TouchableOpacity>
                     </View>

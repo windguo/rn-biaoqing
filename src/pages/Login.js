@@ -158,7 +158,7 @@ export default class Login extends React.Component {
                     height:50,
                     justifyContent:'center',
                     alignItems:'center',
-                    backgroundColor:'#255af6'
+                    backgroundColor:'#f60'
                 }}>
                     <Text style={{fontSize:FONT(18),paddingTop:10,paddingBottom:10,backgroundColor:'transparent',color:'white',textAlign:'center'}}>立即登录</Text>
                 </View>
