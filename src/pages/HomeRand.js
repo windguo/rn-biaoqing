@@ -329,9 +329,18 @@ export default class Home extends Component {
             </Text>
         </View>
     }
+    pushToUrls = (url) => {
+        if (url) {
+            Linking.openURL(url)
+                .catch((err) => {
+                    console.log('An error occurred', err);
+                });
+        }
+    }
     _renderItem = ({ item, index }) => {
         if (item.adType && item.picUrl) {
             return <TouchableOpacity activeOpacity={1} onPress={() => {
+                this.pushToUrls(item.goUrl)
             }}>
                 <View style={{ backgroundColor: '#ffffff', flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 15, justifyContent: 'center', alignItems: 'center' }}>
                     {item.picUrl ? <ImageProgress

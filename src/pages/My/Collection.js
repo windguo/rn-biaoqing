@@ -61,7 +61,7 @@ export default class MyCollectLaugh extends Component {
                             <IconSimple name="arrow-left" size={20} color='white'/>
                         </View>
                     </TouchableOpacity>
-                    <Text style={{fontSize:17,textAlign:'center',fontWeight:'bold',lineHeight:43.7,color:'white'}}>我收藏的内容</Text>
+                    <Text style={{fontSize:17,textAlign:'center',fontWeight:'300',lineHeight:43.7,color:'white'}}>我收藏的表情</Text>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                     }}>
                         <View style={{justifyContent:'center',marginRight:10,alignItems:'center',height:43.7,backgroundColor:'transparent',width:20}}>

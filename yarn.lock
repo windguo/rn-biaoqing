@@ -4516,7 +4516,7 @@ react-native-vector-icons@^4.5.0:
 
 "react-native-wechat@https://github.com/plimerence/react-native-wechat.git":
   version "1.9.9"
-  resolved "https://github.com/plimerence/react-native-wechat.git#d2bc5cfd6f73c4b02930f008cbc8cc1eea7930c1"
+  resolved "https://github.com/plimerence/react-native-wechat.git#9ede6b3a0f58548edaaf564adf52813ec802c64c"
   dependencies:
     events "1.0.2"
 

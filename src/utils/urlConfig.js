@@ -20,12 +20,14 @@ export default urlConfig = {
     // sectionList:'/e/api/?getJson=class',
     sectionList:'/e/api/biaoqing?getJson=class',
 //随机
-    sectionListRand:'/e/api/biaoqing?getJson=class',
+    sectionListRand:'/e/api/biaoqing?getJson=classRand',
     //栏目列表数据后面拼接&classid=3
     // sectionListData:'/e/api/?getJson=column',
     sectionListData:'/e/api/biaoqing?getJson=column',
 //随机
     sectionListDataRand:'/e/api/biaoqing?getJson=column',
+    // 表情包
+    sectionListDataBiaoqingbao:'/e/api/biaoqing?getJson=column',
     //发布地址
     pubLishUrl:'http://m.jianjie8.com/fromapp',
     //点赞或者踩 {classid:2,id:2,dotop:1,doajax:1,ajaxarea:'diggnum'dotop这个字段 传0 是踩踩 传1是赞}

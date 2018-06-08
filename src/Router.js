@@ -19,6 +19,7 @@ import web from './pages/web';
 import Home from './pages/Home';
 import ScrollTabView from './pages/ScrollTabView';
 import ScrollTabViewRand from './pages/ScrollTabViewRand';
+import ScrollTabViewBiaoqingbao from './pages/ScrollTabViewBiaoqingbao';
 import Tab from './components/Tab'
 import Login from  './pages/Login'
 import SearchTag from './pages/Search/index';
@@ -73,7 +74,8 @@ const _configureTransition = () => {
 }
 const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
-    // Rand: { screen: ScrollTabViewRand },
+    Rand: { screen: ScrollTabViewRand },
+    bao: { screen: ScrollTabViewBiaoqingbao },
     My:{screen: My},
 },{
     lazy: true,

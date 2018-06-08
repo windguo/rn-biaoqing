@@ -7,7 +7,7 @@
  * @flow
  */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     StyleSheet,
     Image,
@@ -37,39 +37,37 @@ import {
 
 } from 'react-native';
 import LoadingSpinner from '../components/pull/LoadingSpinner';
-import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view';
+import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import Button from '../components/Button';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
-import {ifIphoneX} from '../utils/iphoneX';
+import { ifIphoneX } from '../utils/iphoneX';
 import HomeRand from './HomeRand';
 import storageKeys from '../utils/storageKeyValue'
 import codePush from 'react-native-code-push'
 import SplashScreen from 'react-native-splash-screen'
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import HttpUtil from  '../utils/HttpUtil';
-//<View style={{...header}}>
-// <Image source={require('../assets/reload.png')} style={{width: 25, height: 25}}/>
-export  default  class ScrollTabView extends Component {
+import HttpUtil from '../utils/HttpUtil';
+export default class ScrollTabView extends Component {
     static navigationOptions = {
-        tabBarLabel: '推荐',
-        tabBarIcon: ({tintColor,focused}) => (
-            <IconSimple name="shuffle" size={22} color={focused ? "#f60":'black'} />
+        tabBarLabel: '表情包',
+        tabBarIcon: ({ tintColor, focused }) => (
+            <IconSimple name="folder-alt" size={22} color={focused ? "#f60" : 'black'} />
         ),
-        header: ({navigation}) => {
+        header: ({ navigation }) => {
             return (
                 <ImageBackground style={{ ...header }} source={require('../assets/backgroundImageHeader.png')} resizeMode='cover'>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                         navigation.state.routes[0].routes[1].params.leftFuc && navigation.state.routes[0].routes[1].params.leftFuc();
                     }}>
-                        
+
                     </TouchableOpacity>
                     <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: 'white' }}>表情宝库</Text>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                         navigation.state.routes[0].routes[1].params.rightFuc && navigation.state.routes[0].routes[1].params.rightFuc();
                     }}>
-                        
+
                     </TouchableOpacity>
                 </ImageBackground>
             )
@@ -81,8 +79,8 @@ export  default  class ScrollTabView extends Component {
         this.state = {
             sectionList: [],
             page: 0,
-            renderLoading:false,
-            renderError:false,
+            renderLoading: false,
+            renderError: false,
         };
 
     }
@@ -111,23 +109,23 @@ export  default  class ScrollTabView extends Component {
         NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
     }
     componentDidMount() {
-        if (Platform.OS === 'android'){
+        if (Platform.OS === 'android') {
             NativeModules.NativeUtil.StatusBar();
         }
         SplashScreen.hide();
         this.CodePushSync();
-       // WeChat.registerApp('wx65594c1aaffccbb9');
+        // WeChat.registerApp('wx65594c1aaffccbb9');
         this.props.navigation.setParams({
             rightFuc: () => {
                 let url = '';
-                if (global.activeClassId === '0' || global.activeClassId === '1'){
+                if (global.activeClassId === '0' || global.activeClassId === '1') {
                     url = urlConfig.pubLishUrl;
-                }else{
+                } else {
                     url = urlConfig.pubLishUrl + '/?classid=' + global.activeClassId;
                 }
-                if (global.userInfo){
-                    this.props.navigation.navigate('Web',{url:url});
-                }else{
+                if (global.userInfo) {
+                    this.props.navigation.navigate('Web', { url: url });
+                } else {
                     this.props.navigation.navigate('Login');
                 }
 
@@ -138,7 +136,7 @@ export  default  class ScrollTabView extends Component {
         });
         InteractionManager.runAfterInteractions(() => {
             this.loadData();
-            this.setState({renderLoading:true});
+            this.setState({ renderLoading: true });
         });
     }
     componentWillUnmount() {
@@ -154,10 +152,10 @@ export  default  class ScrollTabView extends Component {
 
         }
     }
-    handleConnectivityChange = (status) =>{
-        if (status.type !== 'none'){
+    handleConnectivityChange = (status) => {
+        if (status.type !== 'none') {
             this.loadData();
-            this.setState({renderLoading:true});
+            this.setState({ renderLoading: true });
         }
     }
     codePushDownloadDidProgress(progress) {
@@ -192,82 +190,82 @@ export  default  class ScrollTabView extends Component {
         }
     }
 
-    loadData = async()=>{
+    loadData = async () => {
         let url = urlConfig.sectionListRand;
-        console.log('sectionList',url);
+        console.log('sectionList', url);
         let res = await HttpUtil.GET(url);
-        if(!res||!res.result){
-            this.setState({renderLoading:false});
-            this.setState({renderError:true});
+        if (!res || !res.result) {
+            this.setState({ renderLoading: false });
+            this.setState({ renderError: true });
             READ_CACHE(storageKeys.sectionList, (res) => {
                 if (res && res.length > 0) {
-                    this.setState({sectionList: res});
+                    this.setState({ sectionList: res });
                 } else {
                 }
             }, (err) => {
             });
             return;
         }
-        this.setState({renderLoading:false});
-        this.setState({renderError:false});
-        let result = res.result ? res.result:[];
-        this.setState({sectionList: result});
+        this.setState({ renderLoading: false });
+        this.setState({ renderError: false });
+        let result = res.result ? res.result : [];
+        this.setState({ sectionList: result });
         WRITE_CACHE(storageKeys.sectionList, result);
         console.log('res', res);
     };
-        renderTab = (tabs) => {
-            let array = [];
-            array.push(tabs.map((item) => {
-                return <Text style={{width: 50, height: 20}}>{item}</Text>
-            }));
-            return array;
-        }
-        renderTabBar = (params) => {
-            global.activeTab = params.activeTab;
-            this.state.sectionList.forEach((v, i) => {
-                if (i === params.activeTab) {
-                    global.activeClassId = v.classid
-                }
-            })
+    renderTab = (tabs) => {
+        let array = [];
+        array.push(tabs.map((item) => {
+            return <Text style={{ width: 50, height: 20 }}>{item}</Text>
+        }));
+        return array;
+    }
+    renderTabBar = (params) => {
+        global.activeTab = params.activeTab;
+        this.state.sectionList.forEach((v, i) => {
+            if (i === params.activeTab) {
+                global.activeClassId = v.classid
+            }
+        })
 
-            return <ScrollableTabBar activeTextColor='#f60' underlineStyle={{height: 0,width:0}}
-                                     backgroundColor='white' textStyle={{fontSize: 16, fontWeight:'100'}}
-                                     tabStyle={{paddingLeft: 10, paddingRight: 10}} />;
-        }
-        pageNumber = (number) => {
-            let page = 0;
-            this.state.sectionList.forEach((v, i) => {
-                if (parseInt(v.classid) === number) {
-                    page = i
-                }
-            })
-            this.setState({page: page});
-        }
-        renderContent = (sectionList) => {
-            let list = [];
-            list.push(sectionList.map((data, index) => {
-                return <HomeRand tabLabel={data.classname} data={data} {...this.props} pageNumber={(number) => {
-                    this.pageNumber(number)
-                }} index={index}/>
-            }));
-            return list;
-        }
-    _renderError = ()=>{
+        return <ScrollableTabBar activeTextColor='#f60' underlineStyle={{ height: 0, width: 0 }}
+            backgroundColor='white' textStyle={{ fontSize: 16, fontWeight: '100' }}
+            tabStyle={{ paddingLeft: 10, paddingRight: 10 }} />;
+    }
+    pageNumber = (number) => {
+        let page = 0;
+        this.state.sectionList.forEach((v, i) => {
+            if (parseInt(v.classid) === number) {
+                page = i
+            }
+        })
+        this.setState({ page: page });
+    }
+    renderContent = (sectionList) => {
+        let list = [];
+        list.push(sectionList.map((data, index) => {
+            return <HomeRand tabLabel={data.classname} data={data} {...this.props} pageNumber={(number) => {
+                this.pageNumber(number)
+            }} index={index} />
+        }));
+        return list;
+    }
+    _renderError = () => {
         return (
-            <View style={[styles.contain,{justifyContent:'center',alignItems:'center'}]}>
-                {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
-                <TouchableOpacity onPress={()=>this.loadData()}>
-                    <View style={{justifyContent:'center', alignItems:'center'}}>
-                        <Image style={{width:SCALE(323),height:SCALE(271)}} source={require('../assets/nonetwork.png')}/>
-                        <Text style={{fontSize:FONT(15),color:Color.C666666}}>网络无法连接，点击屏幕重试</Text>
+            <View style={[styles.contain, { justifyContent: 'center', alignItems: 'center' }]}>
+                {Platform.OS === 'ios' ? <StatusBar barStyle="light-content" /> : null}
+                <TouchableOpacity onPress={() => this.loadData()}>
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Image style={{ width: SCALE(323), height: SCALE(271) }} source={require('../assets/nonetwork.png')} />
+                        <Text style={{ fontSize: FONT(15), color: Color.C666666 }}>网络无法连接，点击屏幕重试</Text>
                     </View>
                 </TouchableOpacity>
             </View>)
     };
-    _renderLoading = ()=> {
+    _renderLoading = () => {
         return (<View style={styles.contain}>
-            {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
-            <LoadingSpinner type="normal"/></View>)
+            {Platform.OS === 'ios' ? <StatusBar barStyle="light-content" /> : null}
+            <LoadingSpinner type="normal" /></View>)
     };
 
     render() {
@@ -277,8 +275,8 @@ export  default  class ScrollTabView extends Component {
             return this._renderError();
         } else {
             return (
-                <View style={{flex: 1}}>
-                    {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
+                <View style={{ flex: 1 }}>
+                    {Platform.OS === 'ios' ? <StatusBar barStyle="light-content" /> : null}
                     <ScrollableTabView renderTabBar={this.renderTabBar} page={this.state.page}>
                         {this.renderContent(this.state.sectionList)}
                     </ScrollableTabView>
@@ -286,28 +284,28 @@ export  default  class ScrollTabView extends Component {
             );
         }
     }
-    }
-    const header = {
-        backgroundColor: '#C7272F',
-        ...ifIphoneX({
-            paddingTop: 44,
-            height: 88
-        }, {
+}
+const header = {
+    backgroundColor: '#C7272F',
+    ...ifIphoneX({
+        paddingTop: 44,
+        height: 88
+    }, {
             paddingTop: Platform.OS === "ios" ? 20 : SCALE(StatusBarHeight()),
-            height:64,
+            height: 64,
         }),
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems:'flex-end'
-    }
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end'
+}
 const styles = StyleSheet.create({
-    contain:{
-        flex:1,
+    contain: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#ffffff'
     },
-    footer:{
+    footer: {
         height: 50,
         flex: 1,
         alignItems: 'center',
