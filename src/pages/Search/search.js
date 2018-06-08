@@ -64,7 +64,7 @@ export default class Search extends Component {
                         navigation.goBack(null);
                     }}>
                         <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7 }}>
-                            <IconSimple name="arrow-left" size={20} color='white' />
+                            <IconSimple name="arrow-left" size={20} color='#282828' />
                         </View>
                     </TouchableOpacity>
                     <View style={{
@@ -122,7 +122,7 @@ export default class Search extends Component {
                             navigation.state.routes[navigation.state.routes.length-1].params && navigation.state.routes[navigation.state.routes.length-1].params.searchKey(Search.key);
                         }}>
                             <View>
-                                <Text style={{color: '#ffffff',fontWeight:'bold',fontSize:16,marginRight:10}}>搜 索</Text>
+                                <Text style={{color: '#282828',fontWeight:'bold',fontSize:16,marginRight:10}}>搜 索</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -401,7 +401,7 @@ export default class Search extends Component {
             }} style={{ lineHeight: 26, fontSize: 16, color: '#555' }}>
                 {item.nurl ? <ImageProgress
                     source={{ uri: item.nurl }}
-                    resizeMode={'cover'}
+                    resizeMode={'center'}
                     indicator={Pie}
                     indicatorProps={{
                         size: 40,
@@ -424,7 +424,7 @@ export default class Search extends Component {
                 <View style={{backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingVertical:15, justifyContent: 'center',alignItems:'center'}}>
                     { item.picUrl ? <ImageProgress
                         source={{ uri: item.picUrl }}
-                        resizeMode={'cover'}
+                        resizeMode={'center'}
                         indicator={Pie}
                         indicatorProps={{
                             size: 40,

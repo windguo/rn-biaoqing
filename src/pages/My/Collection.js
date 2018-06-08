@@ -58,10 +58,10 @@ export default class MyCollectLaugh extends Component {
                         navigation.goBack(null);
                     }}>
                         <View style={{justifyContent:'center',marginLeft:10,alignItems:'center',height:43.7}}>
-                            <IconSimple name="arrow-left" size={20} color='white'/>
+                            <IconSimple name="arrow-left" size={20} color='#282828'/>
                         </View>
                     </TouchableOpacity>
-                    <Text style={{fontSize:17,textAlign:'center',fontWeight:'300',lineHeight:43.7,color:'white'}}>我收藏的表情</Text>
+                    <Text style={{fontSize:17,textAlign:'center',fontWeight:'300',lineHeight:43.7,color:'#282828'}}>我收藏的表情</Text>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                     }}>
                         <View style={{justifyContent:'center',marginRight:10,alignItems:'center',height:43.7,backgroundColor:'transparent',width:20}}>
@@ -308,7 +308,7 @@ export default class MyCollectLaugh extends Component {
             }} style={{ lineHeight: 26, fontSize: 16, color: '#555' }}>
                 {item.nurl ? <ImageProgress
                     source={{ uri: item.nurl }}
-                    resizeMode={'cover'}
+                    resizeMode={'center'}
                     indicator={Pie}
                     indicatorProps={{
                         size: 40,
@@ -327,7 +327,7 @@ export default class MyCollectLaugh extends Component {
                 <View style={{backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingVertical:15, justifyContent: 'center',alignItems:'center'}}>
                     { item.picUrl ? <ImageProgress
                         source={{ uri: item.picUrl }}
-                        resizeMode={'cover'}
+                        resizeMode={'center'}
                         indicator={Pie}
                         indicatorProps={{
                             size: 40,

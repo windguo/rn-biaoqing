@@ -59,7 +59,7 @@ export default class SearchTag extends Component {
                         navigation.goBack(null);
                     }}>
                         <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7 }}>
-                            <IconSimple name="arrow-left" size={20} color='white' />
+                            <IconSimple name="arrow-left" size={20} color='#282828' />
                         </View>
                     </TouchableOpacity>
                     <View style={{
@@ -117,7 +117,7 @@ export default class SearchTag extends Component {
                             navigation.state.routes[navigation.state.routes.length-1].params && navigation.state.routes[navigation.state.routes.length-1].params.searchKey(SearchTag.key);
                             }}>
                             <View>
-                                <Text style={{color: '#ffffff',fontWeight:'bold',fontSize:16,marginRight:10}}>搜 索</Text>
+                                <Text style={{color: '#282828',fontWeight:'bold',fontSize:16,marginRight:10}}>搜 索</Text>
                             </View>
                         </TouchableOpacity>
                     </View>

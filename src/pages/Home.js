@@ -235,13 +235,6 @@ export default class Home extends Component {
                 {item.nurl ? <ImageProgress
                     source={{ uri: item.nurl }}
                     resizeMode={'center'}
-                    indicator={Pie}
-                    indicatorProps={{
-                        size: 30,
-                        borderWidth: 0,
-                        color: 'rgba(255, 160, 0, 0.8)',
-                        unfilledColor: 'rgba(200, 200, 200, 0.1)'
-                    }}
                     style={{ width: WIDTH-40, height: 50 }}
                      /> : null}
             </Text>
@@ -263,14 +256,7 @@ export default class Home extends Component {
                <View style={{backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingVertical:15, justifyContent: 'center',alignItems:'center'}}>
                    { item.picUrl ? <ImageProgress
                        source={{ uri: item.picUrl }}
-                       resizeMode={'cover'}
-                       indicator={Pie}
-                       indicatorProps={{
-                           size: 30,
-                           borderWidth: 0,
-                           color: 'rgba(255, 160, 0, 0.8)',
-                           unfilledColor: 'rgba(200, 200, 200, 0.1)'
-                       }}
+                       resizeMode={'center'}
                        style={{width:WIDTH-40,height:50}} />  : null }
                </View>
             </TouchableOpacity>

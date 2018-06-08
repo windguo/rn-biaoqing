@@ -75,7 +75,7 @@ const _configureTransition = () => {
 const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
     Rand: { screen: ScrollTabViewRand },
-    bao: { screen: ScrollTabViewBiaoqingbao },
+    // bao: { screen: ScrollTabViewBiaoqingbao },
     My:{screen: My},
 },{
     lazy: true,

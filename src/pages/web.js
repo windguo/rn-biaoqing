@@ -50,10 +50,10 @@ export  default  class web extends Component {
                     navigation.goBack(null);
                 }}>
                     <View style={{justifyContent:'center',marginLeft:10,alignItems:'center',height:43.7}}>
-                        <IconSimple name="arrow-left" size={20} color='white'/>
+                        <IconSimple name="arrow-left" size={20} color='#282828'/>
                     </View>
                 </TouchableOpacity>
-                <Text style={{fontSize:17,textAlign:'center',fontWeight:'bold',lineHeight:43.7,color:'white'}}> {navigation.state.routes[navigation.state.index].params && navigation.state.routes[navigation.state.index].params.WebTitle}</Text>
+                <Text style={{fontSize:17,textAlign:'center',fontWeight:'300',lineHeight:43.7,color:'#282828'}}> {navigation.state.routes[navigation.state.index].params && navigation.state.routes[navigation.state.index].params.WebTitle}</Text>
                 <TouchableOpacity activeOpacity={1} onPress={() => {
                 }}>
                     <View style={{justifyContent:'center',marginRight:10,alignItems:'center',height:43.7,backgroundColor:'transparent',width:20}}>

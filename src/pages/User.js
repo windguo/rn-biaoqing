@@ -348,7 +348,7 @@ export default class User extends Component {
                 <View style={{backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingVertical:15, justifyContent: 'center',alignItems:'center'}}>
                     { item.picUrl ? <ImageProgress
                         source={{ uri: item.picUrl }}
-                        resizeMode={'cover'}
+                        resizeMode={'center'}
                         indicator={Pie}
                         indicatorProps={{
                             size: 40,

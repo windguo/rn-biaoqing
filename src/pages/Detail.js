@@ -41,6 +41,8 @@ import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import HTMLView from 'react-native-htmlview';
 import ImageProgress from 'react-native-image-progress';
 import { Pie, Bar, Circle, CircleSnail } from 'react-native-progress';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as WeChat from 'react-native-wechat';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -54,10 +56,10 @@ export  default  class Detail extends Component {
                         navigation.goBack(null);
                     }}>
                         <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
-                            <IconSimple name="arrow-left" size={20} color='white' />
+                            <IconSimple name="arrow-left" size={20} color='#282828' />
                         </View>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: 'white' }}>{navigation.state.routes[navigation.state.index].params && navigation.state.routes[navigation.state.index].params.title}</Text>
+                    <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>斗图表情宝库详情页</Text>
                     <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7,width:20 }}>
                         
                     </View>
@@ -86,6 +88,7 @@ export  default  class Detail extends Component {
         resolve && resolve();
         if (this.props.index !== 0) { this.isNotfirstFetch = true };
         let result = res.result ? res.result : [];
+        console.log('result===', result);
         this.setState({
             data: result,
         });
@@ -235,19 +238,14 @@ export  default  class Detail extends Component {
                         marginTop: StyleSheet.hairlineWidth,
                         marginBottom: StyleSheet.hairlineWidth
                         }}>
-                        <Text style={{ fontSize: 20}}>
-                            {this.state.data.title}
-                        </Text>
+                        <View style={{alignItems: 'center', justifyContent: 'center',paddingTop:10}}>
+                            <Text style={{ fontSize: 20 }}>
+                                {this.state.data.title}
+                            </Text>
+                        </View>
                         {this.state.data.nurl ? <ImageProgress
                             source={{ uri: this.state.data.nurl }}
-                            resizeMode={'cover'}
-                            indicator={Pie}
-                            indicatorProps={{
-                                size: 40,
-                                borderWidth: 0,
-                                color: 'rgba(255, 160, 0, 0.8)',
-                                unfilledColor: 'rgba(200, 200, 200, 0.1)'
-                            }}
+                            resizeMode={'center'}
                             style={{ width: WIDTH - 40, height: 100 }} /> : null}
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center',justifyContent:'center' }}>
@@ -256,36 +254,37 @@ export  default  class Detail extends Component {
                             onPress={() => this.clickToShare('Session')}
                         >
                             <View style={styles.shareContent}>
-                                <Image style={styles.shareIcon} source={require('../assets/share_icon_wechat.png')} />
+                                <Icon name="weixin" size={40} color='#f60' />
                                 <Text style={styles.spinnerTitle}>微信好友</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={{ flexDirection: 'row',marginLeft: 10}}
-                            onPress={() => this.clickToShare('TimeLine')}
-                        >
-                            <View style={styles.shareContent}>
-                                <Image style={styles.shareIcon} source={require('../assets/share_icon_moments.png')} />
-                                <Text style={styles.spinnerTitle}>微信朋友圈</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={{ flexDirection: 'row',marginLeft: 10}}
-                            onPress={() => this.clickToReport()}
-                        >
-                            <View style={styles.shareContent}>
-                                <IconSimple name="exclamation" size={40} color='black' />
-                                <Text style={styles.spinnerTitle}>举报</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={this.saveImg.bind(this, this.state.data.nurl)} 
-                            hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }} 
+                            onPress={this.saveImg.bind(this, this.state.data.nurl)}
+                            hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
                             style={{ flexDirection: 'row', marginLeft: 10 }}
                         >
                             <View style={styles.shareContent}>
-                                <IconSimple name="cloud-download" size={40} color='black' />
+                                <Icon name="folder-open-o" size={40} color='#6cbcff' />
+                                <Text style={styles.spinnerTitle}>收藏表情</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={this.saveImg.bind(this, this.state.data.nurl)}
+                            hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
+                            style={{ flexDirection: 'row', marginLeft: 10 }}
+                        >
+                            <View style={styles.shareContent}>
+                                <MaterialIcons name="add-to-photos" size={40} color='#fa7b3d' />
                                 <Text style={styles.spinnerTitle}>保存到相册</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'row', marginLeft: 10 }}
+                            onPress={() => this.clickToReport()}
+                        >
+                            <View style={styles.shareContent}>
+                                <IconSimple name="exclamation" size={40} color='#fe96aa' />
+                                <Text style={styles.spinnerTitle}>举报</Text>
                             </View>
                         </TouchableOpacity>
                     </View>

@@ -61,15 +61,18 @@ export  default  class ScrollTabView extends Component {
             return (
                 <ImageBackground style={{ ...header }} source={require('../assets/backgroundImageHeader.png')} resizeMode='cover'>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
-                        navigation.state.routes[0].routes[1].params.leftFuc && navigation.state.routes[0].routes[1].params.leftFuc();
+                        navigation.state.routes[0].routes[0].params.leftFuc && navigation.state.routes[0].routes[0].params.leftFuc();
                     }}>
-                        
+                        <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
+                            <MaterialIcons name="search" size={25} color='#282828' />
+                        </View>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: 'white' }}>表情宝库</Text>
+                    <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>斗图表情宝库</Text>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
-                        navigation.state.routes[0].routes[1].params.rightFuc && navigation.state.routes[0].routes[1].params.rightFuc();
+                        navigation.state.routes[0].routes[0].params.rightFuc && navigation.state.routes[0].routes[0].params.rightFuc();
                     }}>
-                        
+                        <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
+                        </View>
                     </TouchableOpacity>
                 </ImageBackground>
             )
@@ -255,7 +258,7 @@ export  default  class ScrollTabView extends Component {
     _renderError = ()=>{
         return (
             <View style={[styles.contain,{justifyContent:'center',alignItems:'center'}]}>
-                {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
+                
                 <TouchableOpacity onPress={()=>this.loadData()}>
                     <View style={{justifyContent:'center', alignItems:'center'}}>
                         <Image style={{width:SCALE(323),height:SCALE(271)}} source={require('../assets/nonetwork.png')}/>
@@ -266,7 +269,7 @@ export  default  class ScrollTabView extends Component {
     };
     _renderLoading = ()=> {
         return (<View style={styles.contain}>
-            {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
+            
             <LoadingSpinner type="normal"/></View>)
     };
 
@@ -278,7 +281,7 @@ export  default  class ScrollTabView extends Component {
         } else {
             return (
                 <View style={{flex: 1}}>
-                    {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
+                    
                     <ScrollableTabView renderTabBar={this.renderTabBar} page={this.state.page}>
                         {this.renderContent(this.state.sectionList)}
                     </ScrollableTabView>

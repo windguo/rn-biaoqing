@@ -43,6 +43,7 @@ import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import HttpUtil from  '../utils/HttpUtil';
 import ImageProgress from 'react-native-image-progress';
+import ProgressBar from 'react-native-progress/Bar';
 import {Pie,Bar,Circle,CircleSnail} from 'react-native-progress';
 import AutoHeightImage from 'react-native-auto-height-image';
 import CustomImage from '../components/CustomImage'
@@ -317,14 +318,8 @@ export default class Home extends Component {
             }} style={{ lineHeight: 26, fontSize: 16, color: '#555' }}>
                 {item.nurl ? <ImageProgress
                     source={{ uri: item.nurl }}
-                    resizeMode={'cover'}
-                    indicator={Pie}
-                    indicatorProps={{
-                        size: 40,
-                        borderWidth: 0,
-                        color: 'rgba(255, 160, 0, 0.8)',
-                        unfilledColor: 'rgba(200, 200, 200, 0.1)'
-                    }}
+                    resizeMode={'center'}
+                    // indicator={ProgressBar}
                     style={{ width: WIDTH - 40, height: 100 }} /> : null}
             </Text>
         </View>
@@ -345,14 +340,7 @@ export default class Home extends Component {
                 <View style={{ backgroundColor: '#ffffff', flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 15, justifyContent: 'center', alignItems: 'center' }}>
                     {item.picUrl ? <ImageProgress
                         source={{ uri: item.picUrl }}
-                        resizeMode={'cover'}
-                        indicator={Pie}
-                        indicatorProps={{
-                            size: 40,
-                            borderWidth: 0,
-                            color: 'rgba(255, 160, 0, 0.8)',
-                            unfilledColor: 'rgba(200, 200, 200, 0.1)'
-                        }}
+                        resizeMode={'center'}
                         style={{ width: WIDTH - 40, height: 100 }} /> : null}
                 </View>
             </TouchableOpacity>
@@ -364,37 +352,6 @@ export default class Home extends Component {
                     {index === 0 ? <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} /> : <View />}
                     <View style={{ backgroundColor: 'white', paddingHorizontal: 20, paddingTop: 20 }}>
                         {this.renderTextAndImage(item, index)}
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                marginTop: 15,
-                                marginBottom: 15,
-                                justifyContent: 'space-between',
-                            }}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity activeOpacity={1}
-                                    onPress={() => {
-                                        this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
-                                    }}
-                                    hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                                    <Text style={{ color: '#f60' }}>查看详情 >></Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ flexDirection: 'row', marginLeft: 10 }}>
-                                    <TouchableOpacity activeOpacity={1} onPress={() => { this.PostThumb(item, 1, index) }} hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                                        {item.isLike ? <IconSimple name="like" size={15} color='red' /> : <IconSimple name="like" size={15} color='#888' />}
-                                    </TouchableOpacity>
-                                    <Text style={{ marginLeft: 5, color: '#999', fontWeight: '100' }}>{item.diggtop && item.diggtop}</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', marginLeft: 10 }}>
-                                    <TouchableOpacity activeOpacity={1} onPress={() => { this.PostThumb(item, 0, index) }} hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                                        {item.isUnLike ? <IconSimple name="dislike" size={15} color='red' /> : <IconSimple name="dislike" size={15} color='#888' />}
-                                    </TouchableOpacity>
-                                    <Text style={{ marginLeft: 5, color: '#999', fontWeight: '100' }}>{item.diggbot && item.diggbot}</Text>
-                                </View>
-                            </View>
-                        </View>
                     </View>
                 </View>
             </TouchableOpacity>

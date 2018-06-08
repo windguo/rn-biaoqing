@@ -307,7 +307,7 @@ export default class MyCollectLaugh extends Component {
             }} style={{ lineHeight: 26, fontSize: 16, color: '#555' }}>
                 {item.nurl ? <ImageProgress
                     source={{ uri: item.nurl }}
-                    resizeMode={'cover'}
+                    resizeMode={'center'}
                     indicator={Pie}
                     indicatorProps={{
                         size: 40,
@@ -326,7 +326,7 @@ export default class MyCollectLaugh extends Component {
                 <View style={{backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingVertical:15, justifyContent: 'center',alignItems:'center'}}>
                     { item.picUrl ? <ImageProgress
                         source={{ uri: item.picUrl }}
-                        resizeMode={'cover'}
+                        resizeMode={'center'}
                         indicator={Pie}
                         indicatorProps={{
                             size: 40,
