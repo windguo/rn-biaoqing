@@ -74,6 +74,8 @@ export  default  class Detail extends Component {
             data: [],
             refreshing: false,
         };
+
+        this.resuleArray = [];
     }
 //this.props.navigation.state.params.data.content && JSON.parse(this.props.navigation.state.params.data.content).content
     componentDidMount() {
@@ -229,6 +231,28 @@ export  default  class Detail extends Component {
         this.props.navigation.navigate('Web', { url: url });
         this.close();
     }
+    
+
+    clickToFava = () =>{
+        console.log('this.resuleArray===', this.resuleArray);
+
+        let resu = {
+            title: this.state.data.title + '======',
+            id: this.state.data.id + '======',
+        }
+        this.resuleArray.push(resu);
+        WRITE_CACHE(storageKeys.MyCollectList, this.resuleArray);
+        alert('收藏成功==' + this.state.data.title);
+        READ_CACHE(storageKeys.MyCollectList, (res) => {
+            console.log('===res===', res);
+            return false;
+            if (res && res.length > 0) {
+                this.setState({ sectionList: res });
+            } else {
+            }
+        }, (err) => {
+        });
+    }
     render() {
         return (
             <View>
@@ -259,7 +283,7 @@ export  default  class Detail extends Component {
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={this.saveImg.bind(this, this.state.data.nurl)}
+                            onPress={() => this.clickToFava()}
                             hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
                             style={{ flexDirection: 'row', marginLeft: 10 }}
                         >

@@ -127,6 +127,7 @@ export default class Home extends Component {
         }
         if (this.props.index !== 0){ this.isNotfirstFetch = true};
         let result = res.result ? res.result:[];
+        console.log('this.props.index,result=======', this.props.index, result);
         WRITE_CACHE(storageKeys.homeList + 'page' + this.props.index,result);
         this.flatList && this.flatList.setData(this.dealWithLongArray(result), 0);
         console.log('res', res);

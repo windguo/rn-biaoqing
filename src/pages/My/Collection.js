@@ -87,110 +87,19 @@ export default class MyCollectLaugh extends Component {
         this._ViewHeight = new Animated.Value(0);
     }
     componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
-            this.loadData();
+        READ_CACHE(storageKeys.MyCollectList, (res) => {
+            console.log('===res===',res);
+            if (res && res.length > 0) {
+                this.setState({ sectionList: res });
+            } else {
+            }
+        }, (err) => {
         });
+        // InteractionManager.runAfterInteractions(() => {
+        //     this.loadData();
+        // });
     }
     componentWillUnmount() {
-    }
-    setClipboardContent = (text,index,item) => {
-        if(item.classid === '41' || item.classid === '44' || item.classid === '39'){
-            return ;
-        }
-        try {
-            let DeepCopyData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
-            DeepCopyData[index].isCopyed = true;
-            this.flatList.setData(DeepCopyData);
-            Clipboard.setString(item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"") + urlConfig.DetailUrl + item.classid + '/' + item.id);
-            Toast.show('复制成功', {
-                duration: Toast.durations.SHORT,
-                position: Toast.positions.CENTER,
-                shadow: true,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-            });
-        }catch (e){}
-    }
-
-    share = async()=>{
-        //    alert(JSON.stringify(this._shareItem));
-        let data = await NativeModules.NativeUtil.showDialog();
-        if (data.wechat === 3){
-            this.clickToReport();
-            return;
-        }
-        if(data){
-            WeChat.isWXAppInstalled().then((isInstalled) => {
-                if (isInstalled) {
-                    if (data.wechat === 1) {
-                        WeChat.shareToSession({
-                            title: "【哈吧笑话分享】",
-                            description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
-                            type: 'news',
-                            webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: urlConfig.thumbImage,
-                        }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
-                            if (error.message != -2) {
-                                Toast.show(error.message);
-                            }
-                        });
-                    } else if(data.wechat === 2){
-                        WeChat.shareToTimeline({
-                            title: "【哈吧笑话分享】" + this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
-                            description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
-                            type: 'news',
-                            webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: urlConfig.thumbImage,
-                        }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
-                            if (error.message != -2) {
-                                Toast.show(error.message);
-                            }
-                        });
-                    }
-                } else {
-                    Toast.show("没有安装微信软件，请您安装微信之后再试");
-                }
-            });
-            console.log('data',data)
-        }
-    }
-    clickToReport = () => {
-        let url = urlConfig.ReportURL + '/' + this._shareItem.classid + '/' + this._shareItem.id;
-        this.props.navigation.navigate('Web', {url:url});
-        this.close();
-    }
-    clickToShare = (type) => {
-        this.close();
-        WeChat.isWXAppInstalled().then((isInstalled) => {
-            if (isInstalled) {
-                if (type === 'Session') {
-                    WeChat.shareToSession({
-                        title: "【哈吧笑话分享】",
-                        description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
-                        type: 'news',
-                        webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
-                        thumbImage: urlConfig.thumbImage,
-                    }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
-                        Toast.show(error.message);
-                    }});
-                } else {
-                    WeChat.shareToTimeline({
-                        title: "【哈吧笑话分享】" + this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
-                        description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
-                        type: 'news',
-                        webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
-                        thumbImage: urlConfig.thumbImage,
-                    }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
-                        if (error.message != -2) {
-                            Toast.show(error.message);
-                        }
-                    });
-                }
-            } else {
-                //Toast.show("没有安装微信软件，请您安装微信之后再试");
-            }
-        });
     }
     dealWithrequestPage = () =>{
         return  this.requestPageNumber > 1 ? '&page=' + this.requestPageNumber : ''
