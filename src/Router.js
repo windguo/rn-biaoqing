@@ -85,23 +85,7 @@ const TabNavigaApp = TabNavigator({
     backBehavior: 'none', // 按 back 键是否跳转到第一个Tab(首页)， none 为不跳转
     tabBarOptions: tabbaroption,
     configureTransition:()=>_configureTransition(),
-    tabBarComponent:props => <Tab {...props}/>,
-    // tabBarComponent:(props) => {
-    //     const { navigation, navigationState } = props;
-    //    // const _jumpToIndex = props.jumpToIndex; // Just in case
-    //     return (<TabBarBottom {...props} jumpToIndex={(index) => {
-    //         tab = navigationState.routes[index];
-    //         tabRoute = tab.routeName;
-    //         //firstRoute = tab.routes[0].routeName; // navState is Tabs object
-    //
-    //         const tabAction = NavigationActions.navigate({ routeName: tabRoute },{count:5});
-    //         {/*const firstScreenAction = NavigationActions.reset({ index: 0,*/}
-    //         {/*actions: [ NavigationActions.navigate({ routeName: firstRoute }) ]*/}
-    //         {/*});*/}
-    //         navigation.dispatch(tabAction);
-    //         //navigation.dispatch(firstScreenAction);
-    //     }} />)
-    // }
+    tabBarComponent:props => <Tab {...props}/>
 });
 const NavgationApp = StackNavigator({
     Home: {screen: Home},

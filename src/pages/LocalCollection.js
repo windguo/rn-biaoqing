@@ -238,21 +238,10 @@ export default class MyCollectLaugh extends Component {
         //     }
         // }, (err) => {
         // });
-        alert('ok');
+        alert('全部移除了');
     }
 
     _renderItem = ({item, index}) => {
-        if (item.adType && item.picUrl) {
-            return  <TouchableOpacity activeOpacity={1} onPress={() => {
-            }}>
-                <View style={{backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingVertical:15, justifyContent: 'center',alignItems:'center'}}>
-                    { item.picUrl ? <ImageProgress
-                        source={{ uri: item.picUrl }}
-                        resizeMode={'center'}
-                        style={{width:WIDTH-40,height:50}} />  : null }
-                </View>
-            </TouchableOpacity>
-        }
         return (
             <TouchableOpacity activeOpacity={1} onPress={() => {
             }}>
