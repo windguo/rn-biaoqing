@@ -296,21 +296,6 @@ export default class MyCollectLaugh extends Component {
             </TouchableOpacity>
         )
     }
-    onPullRelease = async (resolve) => {
-        this.loadData(resolve);
-    };
-    loadMore = async()=>{
-        return false;
-        this.requestPageNumber += 1;
-        let url = urlConfig.MyFavasUrl  + '&userid=' + GLOBAL.userInfo.userid + this.dealWithrequestPage();
-        let res = await HttpUtil.GET(url);
-        if(!res||!res.result){
-            return;
-        }
-        let result = res.result ? res.result:[];
-        this.flatList && this.flatList.setData(this.dealWithLoadMoreData(result));
-        console.log('res', res);
-    };
     _keyExtractor = (item, index) => index;
     render() {
         return (
@@ -318,9 +303,9 @@ export default class MyCollectLaugh extends Component {
                 <PullList
                     //  data={this.state.data}
                     keyExtractor={this._keyExtractor}
-                    onPullRelease={this.onPullRelease}
+                    // onPullRelease={this.onPullRelease}
                     renderItem={this._renderItem}
-                    onEndReached={this.loadMore}
+                    // onEndReached={this.loadMore}
                     style={{backgroundColor: Color.f5f5f5}}
                     ref={(c) => {this.flatList = c}}
                     ifRenderFooter={true}
