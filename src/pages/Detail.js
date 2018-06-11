@@ -40,6 +40,7 @@ import storageKeys from '../utils/storageKeyValue'
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import HTMLView from 'react-native-htmlview';
 import ImageProgress from 'react-native-image-progress';
+import Toast from 'react-native-root-toast';
 import { Pie, Bar, Circle, CircleSnail } from 'react-native-progress';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -74,8 +75,16 @@ export  default  class Detail extends Component {
             data: [],
             refreshing: false,
         };
-
         this.resuleArray = [];
+        READ_CACHE(storageKeys.MyCollectList, (res) => {
+            if (res && res.length > 0) {
+                this.flatList && this.flatList.setData(res, 0);
+                this.resuleArray = res;
+            }else{
+                console.log('nothings');
+                this.resuleArray = [];
+            }
+        })
     }
 //this.props.navigation.state.params.data.content && JSON.parse(this.props.navigation.state.params.data.content).content
     componentDidMount() {
@@ -101,9 +110,23 @@ export  default  class Detail extends Component {
     saveImg(img) {
         var promise = CameraRoll.saveToCameraRoll(img);
         promise.then(function (result) {
-            alert('保存成功,请到相册查看。');
+            Toast.show('保存成功,请到相册查看。', {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
         }).catch(function (error) {
-            alert('保存失败！\n' + error);
+            Toast.show('保存失败！\n' + error, {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
         });
     }
     _keyExtractor = (item, index) => index;
@@ -237,21 +260,32 @@ export  default  class Detail extends Component {
         console.log('this.resuleArray===', this.resuleArray);
 
         let resu = {
-            title: this.state.data.title + '======',
-            id: this.state.data.id + '======',
-        }
+            title: this.state.data.title,
+            id: this.state.data.id,
+            classid: this.state.data.classid,
+            nurl: this.state.data.nurl,
+            titlepic: this.state.data.titlepic,
+        };
         this.resuleArray.push(resu);
+        // console.log("this.resuleArray.push(resu);===", this.resuleArray.push(resu));
         WRITE_CACHE(storageKeys.MyCollectList, this.resuleArray);
-        alert('收藏成功==' + this.state.data.title);
-        READ_CACHE(storageKeys.MyCollectList, (res) => {
-            console.log('===res===', res);
-            return false;
-            if (res && res.length > 0) {
-                this.setState({ sectionList: res });
-            } else {
-            }
-        }, (err) => {
+        Toast.show('本地收藏【' + this.state.data.title + '】成功,\n请到我收藏的表情查看。', {
+            duration: Toast.durations.SHORT,
+            position: Toast.positions.CENTER,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
         });
+        // READ_CACHE(storageKeys.MyCollectList, (res) => {
+        //     console.log('===res===', res);
+        //     return false;
+        //     if (res && res.length > 0) {
+        //         this.setState({ sectionList: res });
+        //     } else {
+        //     }
+        // }, (err) => {
+        // });
     }
     render() {
         return (

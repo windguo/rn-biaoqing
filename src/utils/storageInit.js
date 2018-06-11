@@ -58,6 +58,17 @@ let remove=(key)=>{
 };
 global.REMOVE_ITEM = remove;
 
+// 删除单个数据
+let removeOne = (key,id) => {
+    storage.remove({
+        key: key,
+        id: id
+    });
+    console.log("key=====-098789===",key);
+    console.log("key=====-098789===",id);
+};
+global.REMOVE_ITEM_ONE = removeOne;
+
 
 //清空所有缓存!! 清空map，移除所有"key-id"数据（但会保留只有key的数据）所以并非严格意义的clear_all
 let clearAll = ()=>{

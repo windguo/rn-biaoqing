@@ -26,7 +26,7 @@ import SearchTag from './pages/Search/index';
 import Search from './pages/Search/search';
 import My from './pages/My/Index';
 import Publish from './pages/My/Publish'
-import Collection from './pages/My/Collection'
+import LocalCollection from './pages/LocalCollection'
 import User from './pages/User'
 const tabbaroption = {
     activeTintColor: 'red',
@@ -75,7 +75,7 @@ const _configureTransition = () => {
 const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
     Rand: { screen: ScrollTabViewRand },
-    // bao: { screen: ScrollTabViewBiaoqingbao },
+    LocalCollection: { screen: LocalCollection },
     My:{screen: My},
 },{
     lazy: true,
@@ -110,7 +110,7 @@ const NavgationApp = StackNavigator({
     Web: {screen: web},
     Login: {screen: Login},
     Publish: {screen: Publish},
-    Collection: {screen: Collection},
+    LocalCollection: {screen: LocalCollection},
     User: {screen: User},
     SearchTag: {screen: SearchTag},
     Search:{screen:Search}
