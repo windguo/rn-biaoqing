@@ -257,8 +257,6 @@ export  default  class Detail extends Component {
     
 
     clickToFava = () =>{
-        console.log('this.resuleArray===', this.resuleArray);
-
         let resu = {
             title: this.state.data.title,
             id: this.state.data.id,
@@ -267,9 +265,8 @@ export  default  class Detail extends Component {
             titlepic: this.state.data.titlepic,
         };
         this.resuleArray.push(resu);
-        // console.log("this.resuleArray.push(resu);===", this.resuleArray.push(resu));
         WRITE_CACHE(storageKeys.MyCollectList, this.resuleArray);
-        Toast.show('本地收藏【' + this.state.data.title + '】成功,\n请到我收藏的表情查看。', {
+        Toast.show('本地收藏【' + this.state.data.title + '】成功,\n请到本地表情查看。', {
             duration: Toast.durations.SHORT,
             position: Toast.positions.CENTER,
             shadow: true,

@@ -59,13 +59,14 @@ let remove=(key)=>{
 global.REMOVE_ITEM = remove;
 
 // 删除单个数据
-let removeOne = (key,id) => {
+let removeOne = (key,data) => {
+    console.log('data======',data);
     storage.remove({
         key: key,
-        id: id
+        id: data
     });
     console.log("key=====-098789===",key);
-    console.log("key=====-098789===",id);
+    console.log("key=====-098789===",data);
 };
 global.REMOVE_ITEM_ONE = removeOne;
 

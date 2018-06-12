@@ -2,7 +2,7 @@
 /**
  * Created by zhangzuohua on 2018/1/22.
  */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     StyleSheet,
     Image,
@@ -29,11 +29,11 @@ import {
     FlatList,
     Clipboard
 } from 'react-native';
-import urlConfig  from  '../utils/urlConfig';
+import urlConfig from '../utils/urlConfig';
 import ModalUtil from '../utils/modalUtil';
 import formatData from '../utils/formatData';
 import Toast from 'react-native-root-toast';
-import LoadError from  '../components/loadError';
+import LoadError from '../components/loadError';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 import PullList from '../components/pull/PullList'
@@ -42,33 +42,33 @@ import * as WeChat from 'react-native-wechat';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
-import HttpUtil from  '../utils/HttpUtil';
+import HttpUtil from '../utils/HttpUtil';
 import ImageProgress from 'react-native-image-progress';
-import {Pie,Bar,Circle,CircleSnail} from 'react-native-progress';
+import { Pie, Bar, Circle, CircleSnail } from 'react-native-progress';
 import { ifIphoneX } from '../utils/iphoneX';
 import AutoHeightImage from 'react-native-auto-height-image';
 import CustomImage from '../components/CustomImage'
-import GuessText from  '../components/GuessText'
+import GuessText from '../components/GuessText'
 export default class MyCollectLaugh extends Component {
     static navigationOptions = {
         tabBarLabel: '本地收藏',
         tabBarIcon: ({ tintColor, focused }) => (
             <IconSimple name="folder-alt" size={22} color={focused ? "#f60" : 'black'} />
         ),
-        header:({navigation}) =>{
+        header: ({ navigation }) => {
             return (
-                <ImageBackground style={{...header}} source={require('../assets/backgroundImageHeader.png')} resizeMode='cover'>
+                <ImageBackground style={{ ...header }} source={require('../assets/backgroundImageHeader.png')} resizeMode='cover'>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                         navigation.goBack(null);
                     }}>
-                        <View style={{justifyContent:'center',marginLeft:10,alignItems:'center',height:43.7}}>
-                            
+                        <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7 }}>
+
                         </View>
                     </TouchableOpacity>
-                    <Text style={{fontSize:17,textAlign:'center',fontWeight:'300',lineHeight:43.7,color:'#282828'}}>我收藏的表情</Text>
+                    <Text style={{ fontSize: 17, textAlign: 'center', fontWeight: '300', lineHeight: 43.7, color: '#282828' }}>本地收藏</Text>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                     }}>
-                        <View style={{justifyContent:'center',marginRight:10,alignItems:'center',height:43.7,backgroundColor:'transparent',width:20}}>
+                        <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7, backgroundColor: 'transparent', width: 20 }}>
                         </View>
                     </TouchableOpacity>
                 </ImageBackground>
@@ -79,10 +79,10 @@ export default class MyCollectLaugh extends Component {
         super(props);
         this.state = {
             refreshing: false,
-            loadError:false,
-            loadNewData:false,
-            visible:false,
-            ViewHeight:new Animated.Value(0)
+            loadError: false,
+            loadNewData: false,
+            visible: false,
+            ViewHeight: new Animated.Value(0)
         };
         //每次请求需要需要加pagenumber
         this.requestPageNumber = 1;
@@ -92,36 +92,63 @@ export default class MyCollectLaugh extends Component {
     }
     componentDidMount() {
         console.log('=======');
+        // this.readCaache();
+        this.viewDidAppear = this.props.navigation.addListener(
+            'didFocus',
+            (obj) => {
+                // console.log('123456789====');
+                // console.log(obj);
+                this.readCaache();
+            }
+        );
+
+
+    }
+
+    readCaache = () => {
         READ_CACHE(storageKeys.MyCollectList, (res) => {
             if (res && res.length > 0) {
-                InteractionManager.runAfterInteractions(() => {
-                    this.flatList && this.flatList.setData(this.dealWithLongArray(res), 0);
-                });
                 this.setState({ sectionList: res });
+                InteractionManager.runAfterInteractions(() => {
+                    this.flatList && this.flatList.setData(res, 0);
+                });
+                
             } else {
-                console.log('nothings');
-            }
+                console.log('readCaache-res-length<0');
+                this.setState({ sectionList: [] });
+                InteractionManager.runAfterInteractions(() => {
+                    this.flatList && this.flatList.setData([], 0);
+                });
+                // 
+            };
         }, (err) => {
+            if (err.name == 'NotFoundError') {
+                console.log('没存数据啊');
+                InteractionManager.runAfterInteractions(() => {
+                    this.flatList && this.flatList.setData(this.dealWithLongArray([]), 0);
+                });
+                this.setState({ sectionList: [] });
+            }
         });
         
     }
     componentWillUnmount() {
     }
-    dealWithrequestPage = () =>{
-        return  this.requestPageNumber > 1 ? '&page=' + this.requestPageNumber : ''
+    dealWithrequestPage = () => {
+        return this.requestPageNumber > 1 ? '&page=' + this.requestPageNumber : ''
     }
 
     dealWithLongArray = (dataArray) => {
         //下拉刷新来几条数据，就对应的删除几条数据 ，以便填充
         let initArray = [];
-        if (this.FlatListData){
-            if (this.FlatListData.length > dataArray.length ){
-                initArray = this.FlatListData.slice(dataArray.length,this.FlatListData.length);
-            }else{
+        if (this.FlatListData) {
+            if (this.FlatListData.length > dataArray.length) {
+                initArray = this.FlatListData.slice(dataArray.length, this.FlatListData.length);
+            } else {
                 initArray = [];
             }
         }
-        let waitDealArray = dataArray.concat(initArray).filter((value)=>{return !(!value || value === "");});
+        let waitDealArray = dataArray.concat(initArray).filter((value) => { return !(!value || value === ""); });
         if (waitDealArray.length >= 50) {
             waitDealArray = waitDealArray.slice(0, 50);
             console.log('处理过的array', waitDealArray);
@@ -131,11 +158,11 @@ export default class MyCollectLaugh extends Component {
     }
     dealWithLoadMoreData = (dataArray) => {
         // let waitDealArray = this.state.data.concat(dataArray);
-        console.log('loadMoreData',dataArray);
-        let waitDealArray =this.FlatListData.concat(dataArray).filter((value)=>{return !(!value || value === "");});
-        console.log('loadMoreDatacontact',waitDealArray);
+        console.log('loadMoreData', dataArray);
+        let waitDealArray = this.FlatListData.concat(dataArray).filter((value) => { return !(!value || value === ""); });
+        console.log('loadMoreDatacontact', waitDealArray);
         if (waitDealArray.length >= 50) {
-            waitDealArray = waitDealArray.slice(waitDealArray.length -50, waitDealArray.length);
+            waitDealArray = waitDealArray.slice(waitDealArray.length - 50, waitDealArray.length);
             console.log('处理过的array', waitDealArray);
         }
         this.FlatListData = waitDealArray;
@@ -151,7 +178,7 @@ export default class MyCollectLaugh extends Component {
             delay: 0,
         });
     }
-    PostThumb = async(item,dotop,index) => {
+    PostThumb = async (item, dotop, index) => {
         try {
             let upDownData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             if (dotop === 0) {
@@ -166,9 +193,9 @@ export default class MyCollectLaugh extends Component {
 
             let url = '';
             if (dotop === 0) {
-                url =  urlConfig.thumbDownUrl;
+                url = urlConfig.thumbDownUrl;
             } else if (dotop === 1) {
-                url =  urlConfig.thumbUpUrl;
+                url = urlConfig.thumbUpUrl;
             }
             //不用formdate后台解析不出来
             let formData = new FormData();
@@ -177,9 +204,9 @@ export default class MyCollectLaugh extends Component {
             formData.append("dotop", '' + dotop);
             formData.append("doajax", '' + 1);
             formData.append("ajaxarea", "diggnum");
-            let res = await HttpUtil.POST(url,formData,'dotop');
-            if (!res){
-                return ;
+            let res = await HttpUtil.POST(url, formData, 'dotop');
+            if (!res) {
+                return;
             }
             let message = '';
             let array = res._bodyInit.split('|');
@@ -192,9 +219,9 @@ export default class MyCollectLaugh extends Component {
                 this.FlatListData = upDownData;
             }
             this.ToastShow(message);
-        }catch (e){}
+        } catch (e) { }
     }
-    clickToFavas = (classid,id) => {
+    clickToFavas = (classid, id) => {
         let url = urlConfig.FavasURL + '/' + classid + '/' + id;
         this.props.navigation.navigate('Web', { url: url });
     }
@@ -223,25 +250,43 @@ export default class MyCollectLaugh extends Component {
         </View>
     }
 
-    removeStorage = (item) =>{
-        REMOVE_ITEM(storageKeys.MyCollectList);
-
-        // REMOVE_ITEM_ONE(storageKeys.MyCollectList,id);
-        // READ_CACHE(storageKeys.MyCollectList, (res) => {
-        //     console.log('===reREAD_CACHEREAD_CACHEREAD_CACHEREAD_CACHEs===', res);
-        //     InteractionManager.runAfterInteractions(() => {
-        //         this.flatList && this.flatList.setData(this.dealWithLongArray(res), 0);
-        //     });
-        //     if (res && res.length > 0) {
-        //         this.setState({ sectionList: res });
-        //     } else {
-        //     }
-        // }, (err) => {
-        // });
-        alert('全部移除了');
+    removeStorage = (item) => {
+        console.log('2222=item.id===', item.id);
+        READ_CACHE(storageKeys.MyCollectList, (res) => {
+            console.log('2222=1234554====', res);
+            res = res.filter(function (x) {
+                if (x.id == item.id) {
+                    console.log('resresresres====', res);
+                    return false;
+                }else{
+                    return true;
+                };
+            });
+            WRITE_CACHE(storageKeys.MyCollectList, res);
+            Toast.show('移除标题是【' + item.title + '】的表情成功', {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
+            this.readCaache();
+        }, (err) => {
+            if (err.name == 'NotFoundError') {
+                console.log('222222没存数据啊');
+                InteractionManager.runAfterInteractions(() => {
+                    this.flatList && this.flatList.setData(this.dealWithLongArray([]), 0);
+                });
+                this.setState({ sectionList: [] });
+            }
+        });
+        
+        //;
+        // alert('全部移除了');
     }
 
-    _renderItem = ({item, index}) => {
+    _renderItem = ({ item, index }) => {
         return (
             <TouchableOpacity activeOpacity={1} onPress={() => {
             }}>
@@ -265,20 +310,6 @@ export default class MyCollectLaugh extends Component {
                                     <Text style={{ color: '#c30' }}>移出收藏</Text>
                                 </TouchableOpacity>
                             </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ flexDirection: 'row', marginLeft: 10 }}>
-                                    <TouchableOpacity activeOpacity={1} onPress={() => { this.PostThumb(item, 1, index) }} hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                                        {item.isLike ? <IconSimple name="like" size={15} color='red' /> : <IconSimple name="like" size={15} color='#888' />}
-                                    </TouchableOpacity>
-                                    <Text style={{ marginLeft: 5, color: '#999', fontWeight: '100' }}>{item.diggtop && item.diggtop}</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', marginLeft: 10 }}>
-                                    <TouchableOpacity activeOpacity={1} onPress={() => { this.PostThumb(item, 0, index) }} hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                                        {item.isUnLike ? <IconSimple name="dislike" size={15} color='red' /> : <IconSimple name="dislike" size={15} color='#888' />}
-                                    </TouchableOpacity>
-                                    <Text style={{ marginLeft: 5, color: '#999', fontWeight: '100' }}>{item.diggbot && item.diggbot}</Text>
-                                </View>
-                            </View>
                         </View>
                     </View>
                 </View>
@@ -288,15 +319,15 @@ export default class MyCollectLaugh extends Component {
     _keyExtractor = (item, index) => index;
     render() {
         return (
-            <View style={{flex: 1}} >
+            <View style={{ flex: 1 }} >
                 <PullList
                     //  data={this.state.data}
                     keyExtractor={this._keyExtractor}
                     // onPullRelease={this.onPullRelease}
                     renderItem={this._renderItem}
                     // onEndReached={this.loadMore}
-                    style={{backgroundColor: Color.f5f5f5}}
-                    ref={(c) => {this.flatList = c}}
+                    style={{ backgroundColor: Color.f5f5f5 }}
+                    ref={(c) => { this.flatList = c }}
                     ifRenderFooter={true}
                 />
             </View>
@@ -355,10 +386,10 @@ const header = {
         paddingTop: 44,
         height: 88
     }, {
-        paddingTop: Platform.OS === "ios" ? 20 : SCALE(StatusBarHeight()),
-        height:64,
-    }),
+            paddingTop: Platform.OS === "ios" ? 20 : SCALE(StatusBarHeight()),
+            height: 64,
+        }),
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems:'flex-end'
+    alignItems: 'flex-end'
 }
