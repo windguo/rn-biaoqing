@@ -74,7 +74,8 @@ export  default  class ScrollTabView extends Component {
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                         navigation.state.routes[0].routes[0].params.rightFuc && navigation.state.routes[0].routes[0].params.rightFuc();
                     }}>
-                        <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
+                        <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7, width: 30 }}>
+                            <IconSimple name="folder-alt" size={25} color={'#fff'} />
                         </View>
                     </TouchableOpacity>
                 </ImageBackground>
@@ -147,17 +148,7 @@ export  default  class ScrollTabView extends Component {
         WeChat.registerApp('wx65594c1aaffccbb9');
         this.props.navigation.setParams({
             rightFuc: () => {
-                let url = '';
-                if (global.activeClassId === '0' || global.activeClassId === '1'){
-                    url = urlConfig.pubLishUrl;
-                }else{
-                    url = urlConfig.pubLishUrl + '/?classid=' + global.activeClassId;
-                }
-                if (global.userInfo){
-                    this.props.navigation.navigate('Web',{url:url});
-                }else{
-                    this.props.navigation.navigate('Login');
-                }
+                this.props.navigation.navigate('LocalBiaoqingCollection')
             },
             leftFuc: () => {
                 this.props.navigation.navigate('SearchTag');

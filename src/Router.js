@@ -20,6 +20,8 @@ import Home from './pages/Home';
 import ScrollTabView from './pages/ScrollTabView';
 import ScrollTabViewRand from './pages/ScrollTabViewRand';
 import ScrollTabViewBiaoqingbao from './pages/ScrollTabViewBiaoqingbao';
+import ScrollTabViewTouxiang from './pages/ScrollTabViewTouxiang';
+import TouxiangDetail from './pages/TouxiangDetail';
 import Tab from './components/Tab'
 import Login from  './pages/Login'
 import SearchTag from './pages/Search/index';
@@ -27,6 +29,8 @@ import Search from './pages/Search/search';
 import My from './pages/My/Index';
 import Publish from './pages/My/Publish'
 import LocalCollection from './pages/LocalCollection'
+import LocalBiaoqingCollection from './pages/LocalBiaoqingCollection'
+import LocalTouxiangCollection from './pages/LocalTouxiangCollection'
 import User from './pages/User'
 const tabbaroption = {
     activeTintColor: 'red',
@@ -74,8 +78,7 @@ const _configureTransition = () => {
 }
 const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
-    Rand: { screen: ScrollTabViewRand },
-    LocalCollection: { screen: LocalCollection },
+    Touxiang: { screen: ScrollTabViewTouxiang },
     My:{screen: My},
 },{
     lazy: true,
@@ -92,8 +95,12 @@ const NavgationApp = StackNavigator({
     Index: {screen: TabNavigaApp},
     Detail: {screen: Detail},
     Web: {screen: web},
+    Touxiang: { screen: ScrollTabViewTouxiang },
     Login: {screen: Login},
     Publish: {screen: Publish},
+    TouxiangDetail: {screen: TouxiangDetail},
+    LocalBiaoqingCollection: {screen: LocalBiaoqingCollection},
+    LocalTouxiangCollection: {screen: LocalTouxiangCollection},
     LocalCollection: {screen: LocalCollection},
     User: {screen: User},
     SearchTag: {screen: SearchTag},

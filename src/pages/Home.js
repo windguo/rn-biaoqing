@@ -223,23 +223,12 @@ export default class Home extends Component {
              this.ToastShow(message);
         }catch (e){}
     }
-    renderTextAndImage = (item,index) => {
-        return <View>
-            <View>
-                <Text activeOpacity={0.8} onPress={() => {
-                    this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl,classid:item.classid });
-                }} style={{fontSize:18,paddingBottom:10}}>{item.title}</Text>
+    renderTextAndImage = (item, index) => {
+        return (
+            <View style={styles.sectionChild}>
+                <Image source={{ uri: item.nurl }} style={{ width: WIDTH * 0.3, height: 100 }} />
             </View>
-            <Text activeOpacity={0.8} onPress={() => {
-                this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl,classid:item.classid });
-            }} style={{ lineHeight: 26, fontSize: 16, color: '#555'}}>
-                {item.nurl ? <ImageProgress
-                    source={{ uri: item.nurl }}
-                    resizeMode={'center'}
-                    style={{ width: WIDTH-40, height: 50 }}
-                     /> : null}
-            </Text>
-        </View>
+        )
     }
     pushToUrls = (url) => {
         if (url) {
@@ -263,15 +252,13 @@ export default class Home extends Component {
             </TouchableOpacity>
         }
         return (
-            <TouchableOpacity activeOpacity={1} onPress={() => {
-            }}>
-                <View>
-                    {index === 0 ? <View style={{width:WIDTH,height:10,backgroundColor:Color.f5f5f5}}/> :<View/>}
-                    <View style={{ backgroundColor: 'white', paddingHorizontal: 20,paddingTop:20}}>
-                        {this.renderTextAndImage(item,index)}
-                    </View>
-                </View>
-            </TouchableOpacity>
+            <View style={styles.sectionParent}>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                    this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
+                }}>
+                    {this.renderTextAndImage(item, index)}
+                </TouchableOpacity>
+            </View>
         )
     }
     onPullRelease = async (resolve) => {
@@ -303,6 +290,7 @@ export default class Home extends Component {
     render() {
         return (
             <View style={{flex: 1}} >
+                <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} />
                 <PullList
                     keyExtractor={this._keyExtractor}
                     onPullRelease={this.onPullRelease}
@@ -317,6 +305,19 @@ export default class Home extends Component {
     }
 }
 const styles = StyleSheet.create({
+    sectionParent:{
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        paddingLeft:10,
+        paddingBottom:10
+    },
+    sectionChild:{
+        flex:1,
+        flexBasis:WIDTH*0.3,
+        borderRadius:10,
+        backgroundColor:'#fff'
+    },
     base: {
         flex: 1
     },

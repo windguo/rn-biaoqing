@@ -51,7 +51,7 @@ import CustomImage from '../components/CustomImage'
 import GuessText from '../components/GuessText'
 export default class MyCollectLaugh extends Component {
     static navigationOptions = {
-        tabBarLabel: '本地收藏',
+        tabBarLabel: '本地收藏的头像',
         tabBarIcon: ({ tintColor, focused }) => (
             <IconSimple name="folder-alt" size={22} color={focused ? "#f60" : 'black'} />
         ),
@@ -62,10 +62,10 @@ export default class MyCollectLaugh extends Component {
                         navigation.goBack(null);
                     }}>
                         <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7 }}>
-
+                            <IconSimple name="arrow-left" size={20} color='#282828' />
                         </View>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 17, textAlign: 'center', fontWeight: '300', lineHeight: 43.7, color: '#282828' }}>本地收藏</Text>
+                    <Text style={{ fontSize: 17, textAlign: 'center', fontWeight: '300', lineHeight: 43.7, color: '#282828' }}>本地收藏的头像</Text>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                     }}>
                         <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7, backgroundColor: 'transparent', width: 20 }}>
@@ -106,7 +106,7 @@ export default class MyCollectLaugh extends Component {
     }
 
     readCaache = () => {
-        READ_CACHE(storageKeys.MyCollectList, (res) => {
+        READ_CACHE(storageKeys.MyCollectTouxiangList, (res) => {
             if (res && res.length > 0) {
                 this.setState({ sectionList: res });
                 InteractionManager.runAfterInteractions(() => {
@@ -252,7 +252,7 @@ export default class MyCollectLaugh extends Component {
 
     removeStorage = (item) => {
         console.log('2222=item.id===', item.id);
-        READ_CACHE(storageKeys.MyCollectList, (res) => {
+        READ_CACHE(storageKeys.MyCollectTouxiangList, (res) => {
             console.log('2222=1234554====', res);
             res = res.filter(function (x) {
                 if (x.id == item.id) {
@@ -262,8 +262,8 @@ export default class MyCollectLaugh extends Component {
                     return true;
                 };
             });
-            WRITE_CACHE(storageKeys.MyCollectList, res);
-            Toast.show('移除标题是【' + item.title + '】的表情成功', {
+            WRITE_CACHE(storageKeys.MyCollectTouxiangList, res);
+            Toast.show('移除标题是【' + item.title + '】的头像成功', {
                 duration: Toast.durations.SHORT,
                 position: Toast.positions.CENTER,
                 shadow: true,
@@ -319,16 +319,17 @@ export default class MyCollectLaugh extends Component {
     _keyExtractor = (item, index) => index;
     render() {
         return (
-            <View>
-                <TouchableOpacity activeOpacity={1} onPress={() => { this.props.navigation.navigate('LocalBiaoqingCollection') }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, backgroundColor: 'white', justifyContent: 'space-between' }}>
-                        <View style={{ marginLeft: 20, flexDirection: 'row', alignItems: 'center' }}>
-                            <IconSimple name="question" size={22} color={Color.FontColor} />
-                            <Text style={{ marginLeft: 10 }}>本地收藏的表情</Text>
-                        </View>
-                        <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{ marginRight: 20 }} />
-                    </View>
-                </TouchableOpacity>
+            <View style={{ flex: 1 }} >
+                <PullList
+                    //  data={this.state.data}
+                    keyExtractor={this._keyExtractor}
+                    // onPullRelease={this.onPullRelease}
+                    renderItem={this._renderItem}
+                    // onEndReached={this.loadMore}
+                    style={{ backgroundColor: Color.f5f5f5 }}
+                    ref={(c) => { this.flatList = c }}
+                    ifRenderFooter={true}
+                />
             </View>
         );
     }

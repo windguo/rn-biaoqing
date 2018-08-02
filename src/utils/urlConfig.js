@@ -46,7 +46,10 @@ export default urlConfig = {
     //复制完跳去详情
      DetailUrl: "http://m.jianjie8.com/detail/",
     Search:'/e/api/biaoqing/?classid=72&getJson=',
-     DetailUrl:'/e/api/biaoqing/?getJson=content'
+     DetailUrl:'/e/api/biaoqing/?getJson=content',
+    TouxiangDetailUrl:'/e/api/biaoqing/?getJson=TouxiangContent',
+    sectionListTouxiangClass: '/e/api/biaoqing?getJson=touxiangClass',
+    sectionListDataTouxiang: '/e/api/biaoqing?getJson=touxiangColumn',
 
 
 }
