@@ -64,7 +64,7 @@ export  default  class ScrollTabView extends Component {
                         navigation.goBack(null)
                     }}>
                         <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7 }}>
-                            <IconSimple name="arrow-left" size={20} />
+                            {/* <IconSimple name="arrow-left" size={20} /> */}
                         </View>
                     </TouchableOpacity>
                     <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, fontWeight: '100' }}>个性头像</Text>
