@@ -72,7 +72,7 @@ export  default  class ScrollTabView extends Component {
                         navigation.navigate('LocalTouxiangCollection');
                     }}>
                         <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7, width: 30 }}>
-                            <IconSimple name="folder-alt" size={25} color={'#fff'} />
+                            <IconSimple name="folder-alt" size={25} />
                         </View>
                     </TouchableOpacity>
                 </ImageBackground>

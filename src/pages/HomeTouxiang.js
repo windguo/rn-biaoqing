@@ -424,7 +424,6 @@ export default class Home extends Component {
     renderTextAndImage = (item, index) => {
         return (
             <View style={styles.sectionChild}>
-                <Text>{item.title}</Text>
                 <Image source={{ uri: item.nurl }} style={{ width: WIDTH * 0.3, height: 100 }} />
             </View>
         )
