@@ -22,6 +22,7 @@ import ScrollTabViewRand from './pages/ScrollTabViewRand';
 import ScrollTabViewBiaoqingbao from './pages/ScrollTabViewBiaoqingbao';
 import ScrollTabViewTouxiang from './pages/ScrollTabViewTouxiang';
 import TouxiangDetail from './pages/TouxiangDetail';
+import creatBiaoqing from './pages/creat/Biaoqing';
 import Tab from './components/Tab'
 import Login from  './pages/Login'
 import SearchTag from './pages/Search/index';
@@ -78,6 +79,7 @@ const _configureTransition = () => {
 }
 const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
+    creatBiaoqing: { screen: creatBiaoqing },
     Touxiang: { screen: ScrollTabViewTouxiang },
     My:{screen: My},
 },{
@@ -97,6 +99,7 @@ const NavgationApp = StackNavigator({
     Web: {screen: web},
     Touxiang: { screen: ScrollTabViewTouxiang },
     Login: {screen: Login},
+    creatBiaoqing: {screen: creatBiaoqing},
     Publish: {screen: Publish},
     TouxiangDetail: {screen: TouxiangDetail},
     LocalBiaoqingCollection: {screen: LocalBiaoqingCollection},

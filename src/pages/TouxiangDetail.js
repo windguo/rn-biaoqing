@@ -45,8 +45,23 @@ import { Pie, Bar, Circle, CircleSnail } from 'react-native-progress';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as WeChat from 'react-native-wechat';
+import Swiper from 'react-native-swiper';
+const loading = require('../assets/loading.gif');
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
+
+const Slide = props => {
+    return (<View style={styles.slide}>
+        <Image onLoad={props.loadHandle.bind(null, props.i)} style={styles.image} source={{ uri: props.uri }} />
+        {
+            !props.loaded && <View style={styles.loadingView}>
+                <Image style={styles.loadingImage} source={loading} />
+            </View>
+        }
+        
+    </View>)
+}
+
 export default class TouxiangDetail extends Component {
     static navigationOptions = {
         title: '头像详情页',
@@ -66,7 +81,8 @@ export default class TouxiangDetail extends Component {
                     </View>
                 </ImageBackground>
             )
-        }
+        },
+        header:null
     };
 
     constructor(props) {
@@ -74,7 +90,15 @@ export default class TouxiangDetail extends Component {
         this.state = {
             data: [],
             refreshing: false,
+            imgList: [
+                'http://g.hiphotos.baidu.com/image/pic/item/5bafa40f4bfbfbedc5597ab474f0f736aec31ffc.jpg',
+                'http://e.hiphotos.baidu.com/image/pic/item/f9198618367adab4bee9208d87d4b31c8601e4c7.jpg',
+                'http://b.hiphotos.baidu.com/image/pic/item/8718367adab44aedb794e128bf1c8701a08bfb20.jpg',
+                'http://c.hiphotos.baidu.com/image/pic/item/f9198618367adab4b025268587d4b31c8601e47b.jpg'
+            ],
+            loadQueue: [0, 0, 0, 0]
         };
+        this.loadHandle = this.loadHandle.bind(this);
         this.resuleArray = [];
         READ_CACHE(storageKeys.MyCollectTouxiangList, (res) => {
             if (res && res.length > 0) {
@@ -285,69 +309,103 @@ export default class TouxiangDetail extends Component {
         // }, (err) => {
         // });
     }
+    loadHandle(i) {
+        let loadQueue = this.state.loadQueue
+        loadQueue[i] = 1
+        this.setState({
+            loadQueue
+        })
+    }
     render() {
         return (
-            <View>
-                <ScrollView>
-                    <View style={{ 
-                        padding: 20, 
-                        marginTop: StyleSheet.hairlineWidth,
-                        marginBottom: StyleSheet.hairlineWidth
-                        }}>
-                        <View style={{alignItems: 'center', justifyContent: 'center',paddingTop:10}}>
-                            <Text style={{ fontSize: 20 }}>
-                                {this.state.data.title}
-                            </Text>
-                        </View>
-                        {this.state.data.nurl ? <ImageProgress
-                            source={{ uri: this.state.data.nurl }}
-                            resizeMode={'center'}
-                            style={{ width: WIDTH - 40, height: 100 }} /> : null}
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center',justifyContent:'center' }}>
-                        <TouchableOpacity
-                            style={{ flexDirection: 'row', marginLeft: 10 }}
-                            onPress={() => this.clickToShare('Session')}
-                        >
-                            <View style={styles.shareContent}>
-                                <Icon name="weixin" size={40} color='#f60' />
-                                <Text style={styles.spinnerTitle}>微信好友</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => this.clickToFava()}
-                            hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
-                            style={{ flexDirection: 'row', marginLeft: 10 }}
-                        >
-                            <View style={styles.shareContent}>
-                                <Icon name="folder-open-o" size={40} color='#6cbcff' />
-                                <Text style={styles.spinnerTitle}>收藏头像</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={this.saveImg.bind(this, this.state.data.nurl)}
-                            hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
-                            style={{ flexDirection: 'row', marginLeft: 10 }}
-                        >
-                            <View style={styles.shareContent}>
-                                <MaterialIcons name="add-to-photos" size={40} color='#fa7b3d' />
-                                <Text style={styles.spinnerTitle}>保存到相册</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={{ flexDirection: 'row', marginLeft: 10 }}
-                            onPress={() => this.clickToReport()}
-                        >
-                            <View style={styles.shareContent}>
-                                <IconSimple name="exclamation" size={40} color='#fe96aa' />
-                                <Text style={styles.spinnerTitle}>举报</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
+            <View style={{ flex: 1 }}>
+                <Swiper loadMinimal loadMinimalSize={1} style={styles.wrapper} loop={false}>
+                    {
+                        this.state.imgList.map((item, i) => <Slide
+                            loadHandle={this.loadHandle}
+                            loaded={!!this.state.loadQueue[i]}
+                            uri={item}
+                            i={i}
+                            key={i} />)
+                    }
+                </Swiper>
+                <View>
+                    <Text>Current Loaded Images: {this.state.loadQueue}</Text>
+                </View>
             </View>
-        );
+        )
     }
+    // render() {
+    //     return (
+    //         <View>
+    //             <ScrollView>
+    //                 <View style={{flexDirection:'row'}}>
+    //                     <View style={{flex:1}}>
+    //                         <Image source={{ uri: this.state.data.nurl }} style={{ width: 100, height: 100 }} />
+    //                     </View>
+    //                     <View style={{flex:1}}>
+    //                         <Image source={{ uri: this.state.data.nurl }} style={{ width: 200, height: 200,borderRadius:10 }} />
+    //                     </View>
+    //                 </View>
+    //                 <View style={{ 
+    //                     padding: 20, 
+    //                     marginTop: StyleSheet.hairlineWidth,
+    //                     marginBottom: StyleSheet.hairlineWidth
+    //                     }}>
+    //                     <View style={{alignItems: 'center', justifyContent: 'center',paddingTop:10}}>
+    //                         <Text style={{ fontSize: 20 }}>
+    //                             {this.state.data.title}
+    //                         </Text>
+    //                     </View>
+    //                     {this.state.data.nurl ? <ImageProgress
+    //                         source={{ uri: this.state.data.nurl }}
+    //                         resizeMode={'center'}
+    //                         style={{ width: WIDTH - 40, height: 100 }} /> : null}
+    //                 </View>
+    //                 <View style={{ flexDirection: 'row', alignItems: 'center',justifyContent:'center' }}>
+    //                     <TouchableOpacity
+    //                         style={{ flexDirection: 'row', marginLeft: 10 }}
+    //                         onPress={() => this.clickToShare('Session')}
+    //                     >
+    //                         <View style={styles.shareContent}>
+    //                             <Icon name="weixin" size={40} color='#f60' />
+    //                             <Text style={styles.spinnerTitle}>微信好友</Text>
+    //                         </View>
+    //                     </TouchableOpacity>
+    //                     <TouchableOpacity
+    //                         onPress={() => this.clickToFava()}
+    //                         hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
+    //                         style={{ flexDirection: 'row', marginLeft: 10 }}
+    //                     >
+    //                         <View style={styles.shareContent}>
+    //                             <Icon name="folder-open-o" size={40} color='#6cbcff' />
+    //                             <Text style={styles.spinnerTitle}>收藏头像</Text>
+    //                         </View>
+    //                     </TouchableOpacity>
+    //                     <TouchableOpacity
+    //                         onPress={this.saveImg.bind(this, this.state.data.nurl)}
+    //                         hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
+    //                         style={{ flexDirection: 'row', marginLeft: 10 }}
+    //                     >
+    //                         <View style={styles.shareContent}>
+    //                             <MaterialIcons name="add-to-photos" size={40} color='#fa7b3d' />
+    //                             <Text style={styles.spinnerTitle}>保存到相册</Text>
+    //                         </View>
+    //                     </TouchableOpacity>
+    //                     <TouchableOpacity
+    //                         style={{ flexDirection: 'row', marginLeft: 10 }}
+    //                         onPress={() => this.clickToReport()}
+    //                     >
+    //                         <View style={styles.shareContent}>
+    //                             <IconSimple name="exclamation" size={40} color='#fe96aa' />
+    //                             <Text style={styles.spinnerTitle}>举报</Text>
+    //                         </View>
+    //                     </TouchableOpacity>
+    //                 </View>
+    //             </ScrollView>
+    //         </View>
+    //     );
+    // }
 }
 
 const htmlStyles = StyleSheet.create({
@@ -372,22 +430,34 @@ const header = {
 }
 
 const styles = StyleSheet.create({
-    shareParent: {
-        flexDirection: 'row',
-        marginTop: 10,
-        marginBottom: 10
+    wrapper: {
     },
-    shareContent: {
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'center'
+
+    slide: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: 'transparent'
     },
-    shareIcon: {
-        width: 40,
-        height: 40
+    image: {
+        width:WIDTH,
+        flex: 1,
+        backgroundColor: 'transparent'
     },
-    spinnerTitle:{
-        paddingTop: 10
+
+    loadingView: {
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        // backgroundColor: 'rgba(0,0,0,.5)'
+    },
+
+    loadingImage: {
+        width: 200,
+        height: 200
     }
     
 })

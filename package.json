@@ -24,6 +24,7 @@
     "react-native-scrollable-tab-view": "https://github.com/qianbaofe/react-native-scrollable-tab-view.git",
     "react-native-splash-screen": "^3.0.6",
     "react-native-storage": "^0.2.2",
+    "react-native-swiper": "^1.5.13",
     "react-native-vector-icons": "^4.5.0",
     "react-native-wechat": "https://github.com/plimerence/react-native-wechat.git",
     "react-navigation": "^1.0.0-beta.27"

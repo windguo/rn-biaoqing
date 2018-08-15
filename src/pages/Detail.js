@@ -1,5 +1,5 @@
 /**
- * Created by zhangzuohua on 2018/1/18.
+ * Created by zhangzuohua on 2018/1/22.
  */
 /**
  * Sample React Native App
@@ -7,7 +7,7 @@
  * @flow
  */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     StyleSheet,
     Image,
@@ -30,26 +30,38 @@ import {
     DeviceEventEmitter,
     LayoutAnimation,
     NativeModules,
-    ImageBackground,
     CameraRoll,
-    FlatList
+    ImageBackground,
+    FlatList,
+    AppState,
+    NetInfo,
+    Modal
 } from 'react-native';
-import { ifIphoneX } from '../utils/iphoneX';
-import HttpUtil from '../utils/HttpUtil';
-import storageKeys from '../utils/storageKeyValue'
-import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
-import HTMLView from 'react-native-htmlview';
-import ImageProgress from 'react-native-image-progress';
-import Toast from 'react-native-root-toast';
-import { Pie, Bar, Circle, CircleSnail } from 'react-native-progress';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import * as WeChat from 'react-native-wechat';
+import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
+import LoadingSpinner from '../components/pull/LoadingSpinner';
+import Button from '../components/Button';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
-export  default  class Detail extends Component {
+import { ifIphoneX } from '../utils/iphoneX';
+import Home from './Home';
+import SplashScreen from 'react-native-splash-screen'
+import * as WeChat from 'react-native-wechat';
+import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import urlConfig from '../utils/urlConfig';
+import storageKeys from '../utils/storageKeyValue';
+var DeviceInfo = require('react-native-device-info');
+import Toast from 'react-native-root-toast';
+import JPushModule from 'jpush-react-native';
+import HttpUtil from '../utils/HttpUtil';
+import Icon from 'react-native-vector-icons/FontAwesome';
+const NativeVersion = DeviceInfo.getVersion();
+export default class ScrollTabView extends Component {
     static navigationOptions = {
-        title: '详情页',
+        tabBarLabel: '最新',
+        tabBarIcon: ({ tintColor, focused }) => (
+            <IconSimple name="fire" size={22} color={focused ? "#f60" : 'black'} />
+        ),
         header: ({ navigation }) => {
             return (
                 <ImageBackground style={{ ...header }} source={require('../assets/backgroundImageHeader.png')} resizeMode='cover'>
@@ -60,104 +72,99 @@ export  default  class Detail extends Component {
                             <IconSimple name="arrow-left" size={20} color='#282828' />
                         </View>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>斗图表情宝库详情页</Text>
-                    <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7,width:20 }}>
-                        
-                    </View>
+                    <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>{navigation.state.routes[navigation.state.index].params && navigation.state.routes[navigation.state.index].params.title}</Text>
+                    <TouchableOpacity activeOpacity={1} onPress={() => {
+                        navigation.navigate('New')
+                    }}>
+                        <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7, width: 30 }}>
+                            <IconSimple name="home" size={20} color='#282828' />
+                        </View>
+                    </TouchableOpacity>
                 </ImageBackground>
             )
         }
     };
-
+    //88  43.7 fontSize 17 fontWeight:600 RGBA0009 textALi;center
     constructor(props) {
         super(props);
         this.state = {
-            data: [],
-            refreshing: false,
+            data:[],
+            sectionList: [],
+            page: 0,
+            renderLoading: false,
+            renderError: false,
+            showModal: false,
         };
+        //每次请求需要需要加pagenumber
+        this.requestPageNumber = 1;
         this.resuleArray = [];
         READ_CACHE(storageKeys.MyCollectList, (res) => {
             if (res && res.length > 0) {
                 this.flatList && this.flatList.setData(res, 0);
                 this.resuleArray = res;
-            }else{
+            } else {
                 console.log('nothings');
                 this.resuleArray = [];
             }
         })
     }
-//this.props.navigation.state.params.data.content && JSON.parse(this.props.navigation.state.params.data.content).content
+    readUserCache = () => {
+        READ_CACHE(storageKeys.userInfo, (res) => {
+            if (res && res.userid) {
+                GLOBAL.userInfo = res
+                console.log('userInfo', res);
+            } else {
+                console.log('获取用户信息失败');
+            }
+        }, (err) => {
+            console.log('获取用户信息失败');
+        });
+
+    }
+    CodePushSync = () => {
+        codePush.sync(
+            {
+                installMode: codePush.InstallMode.ON_NEXT_RESTART,
+                // updateDialog: {
+                //     appendReleaseDescription: true,
+                //     descriptionPrefix: '更新内容:',
+                //     mandatoryContinueButtonLabel: '更新',
+                //     mandatoryUpdateMessage: '有新版本了，请您及时更新',
+                //     optionalInstallButtonLabel: '立即更新',
+                //     optionalIgnoreButtonLabel: '稍后',
+                //     optionalUpdateMessage: '有新版本了，是否更新?',
+                //     title: '提示'
+                // },
+            },
+            this.codePushStatusDidChange.bind(this),
+            this.codePushDownloadDidProgress.bind(this)
+        );
+    }
+    componentWillMount() {
+        this.updateConfig = {
+            ios: { isForce: false, downloadUrl: '' },
+            android: { isForce: false, downloadUrl: '' },
+            message: ''
+        },
+            //监听状态改变事件
+            AppState.addEventListener('change', this.handleAppStateChange);
+        NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
+
+    }
     componentDidMount() {
-        this.loadData();
-        this.loadDataRand();
-    }
-    loadData = async (resolve) => {
-        let url = urlConfig.DetailUrl + '&id=' + this.props.navigation.state.params.id;
-        console.log('loadUrl', url);
-        let res = await HttpUtil.GET(url);
-        console.log(res);
-        resolve && resolve();
-        if (this.props.index !== 0) { this.isNotfirstFetch = true };
-        let result = res.result ? res.result : [];
-        console.log('result===', result);
-        this.setState({
-            data: result,
-        });
-        console.log('res', res);
-    };
-
-    //保存图片
-    saveImg(img) {
-        var promise = CameraRoll.saveToCameraRoll(img);
-        promise.then(function (result) {
-            Toast.show('保存成功,请到相册查看。', {
-                duration: Toast.durations.SHORT,
-                position: Toast.positions.CENTER,
-                shadow: true,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-            });
-        }).catch(function (error) {
-            Toast.show('保存失败！\n' + error, {
-                duration: Toast.durations.SHORT,
-                position: Toast.positions.CENTER,
-                shadow: true,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-            });
-        });
-    }
-    _keyExtractor = (item, index) => index;
-
-    loadDataRand = async (resolve) => {
-        // alert('111');
-        let url = urlConfig.sectionListData + '&classid=0';
-        console.log('loadDataRand----Url', url);
-        let res = await HttpUtil.GET(url);
-        resolve && resolve();
-        if (!res || !res.result) {
-            READ_CACHE(storageKeys.homeList + 'page' + this.props.index, (res) => {
-                if (res && res.length > 0) {
-                    this.flatList && this.flatList.setData(res, 0);
-                    this.FlatListData = res;
-                } else { }
-            }, (err) => {
-            });
-            return;
+        this.loadContentData();
+        this.readUserCache();
+        if (Platform.OS === 'android') {
+            NativeModules.NativeUtil.StatusBar();
         }
-        if (this.props.index !== 0) { this.isNotfirstFetch = true };
-        let result = res.result ? res.result : [];
-        WRITE_CACHE(storageKeys.homeList + 'page' + this.props.index, result);
-        // console.log('resultresultresultresult:' + result);
-        // this.setState(
-        //     data = result
-        // )
-        // console.log(data);
-        this.flatList && this.flatList.setData(this.dealWithLongArray(result), 0);
-        console.log('res', res);
-    };
+        InteractionManager.runAfterInteractions(() => {
+            this.loadData();
+            this.checkAppUpdateMessage();
+            this.setState({ renderLoading: true });
+        });
+
+
+    }
     clickToShare = (type) => {
         console.log('XXXXXXXXXXXXX', urlConfig.thumbImage);
         this.close();
@@ -254,9 +261,7 @@ export  default  class Detail extends Component {
         this.props.navigation.navigate('Web', { url: url });
         this.close();
     }
-    
-
-    clickToFava = () =>{
+    clickToFava = () => {
         let resu = {
             title: this.state.data.title,
             id: this.state.data.id,
@@ -284,33 +289,349 @@ export  default  class Detail extends Component {
         // }, (err) => {
         // });
     }
+    loadContentData = async (resolve) => {
+        let url = urlConfig.DetailUrl + '&id=' + this.props.navigation.state.params.id;
+        console.log('loadUrl', url);
+        let res = await HttpUtil.GET(url);
+        console.log(res);
+        resolve && resolve();
+        if (this.props.index !== 0) { this.isNotfirstFetch = true };
+        let result = res.result ? res.result : [];
+        console.log('result===', result);
+        this.setState({
+            data: result,
+        });
+        console.log('res', res);
+    };
+
+    //保存图片
+    saveImg(img) {
+        var promise = CameraRoll.saveToCameraRoll(img);
+        promise.then(function (result) {
+            Toast.show('保存成功,请到相册查看。', {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
+        }).catch(function (error) {
+            Toast.show('保存失败！\n' + error, {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
+        });
+    }
+
+    componentWillUnmount() {
+        //删除状态改变事件监听
+        AppState.removeEventListener('change');
+        NetInfo.removeEventListener('connectionChange');
+        // JPushModule.removeReceiveCustomMsgListener();
+        // JPushModule.removeReceiveNotificationListener();
+        // JPushModule.clearAllNotifications()
+
+    }
+    handleAppStateChange = (appState) => {
+        console.log('当前状态为:' + appState);
+        if (appState === 'active') {
+            this.CodePushSync && this.CodePushSync();
+
+        }
+    }
+    handleConnectivityChange = (status) => {
+        console.log('status change:', status);
+        if (status.type !== 'none') {
+            this.loadData();
+            this.setState({ renderLoading: true });
+        }
+    }
+    codePushDownloadDidProgress(progress) {
+
+    }
+    codePushStatusDidChange(syncStatus) {
+        switch (syncStatus) {
+            case codePush.SyncStatus.CHECKING_FOR_UPDATE:
+                console.log("Checking for update.");
+                break;
+            case codePush.SyncStatus.DOWNLOADING_PACKAGE:
+                console.log("Downloading package.");
+                break;
+            case codePush.SyncStatus.AWAITING_USER_ACTION:
+                console.log('wait for user');
+                break;
+            case codePush.SyncStatus.INSTALLING_UPDATE:
+                console.log('Installing update.');
+                break;
+            case codePush.SyncStatus.UP_TO_DATE:
+                console.log("App up to date.");
+                break;
+            case codePush.SyncStatus.UPDATE_IGNORED:
+                console.log("Update cancelled by user.");
+                break;
+            case codePush.SyncStatus.UPDATE_INSTALLED:
+                console.log('installed');
+                break;
+            case codePush.SyncStatus.UNKNOWN_ERROR:
+                console.log('unknow error');
+                break;
+        }
+    }
+    clickDownload = () => {
+        let url = '';
+        if (Platform.OS === 'ios') {
+            url = this.updateConfig.ios.downloadUrl;
+            // if (!this.updateConfig.ios.flag){
+            //     this.setState({showModal:false});
+            // }
+        } else {
+            url = this.updateConfig.android.downloadUrl;
+            // if (!this.updateConfig.android.flag){
+            //     this.setState({showModal:false});
+            // }
+        }
+        Linking.openURL(url)
+            .catch((err) => {
+                console.log('An error occurred', err);
+            });
+    }
+    clickToCancelModal = () => {
+        this.setState({ showModal: false })
+    }
+    compareVersionNumber = (ServerPram, LocalPram) => {
+        let v1g = ServerPram.split(".");
+        let v2g = LocalPram.split(".");
+        let flag = false;
+        for (var i = 0; i < 3; i++) {
+            if (parseInt(v1g[i]) > parseInt(v2g[i])) {
+                flag = true;
+                break;
+            }
+        }
+        return flag;
+    }
+    checkAppUpdateMessage = async () => {
+        let url = urlConfig.CheckUpdate;
+        let res = await HttpUtil.GET(url);
+        if (!res || !res.result) {
+            return;
+        }
+        let result = res.result ? res.result : [];
+        try {
+            let [message, android, ios] = result;
+            console.log('xxxxx', message, android, ios);
+            if (Platform.OS === 'android') {
+                let compRes = this.compareVersionNumber(android.android, NativeVersion);
+                this.updateConfig.android = android;
+                this.updateConfig.message = message.updateInfo;
+                if (compRes) {
+                    this.setState({ showModal: true });
+                }
+            } else if (Platform.OS === 'ios') {
+                let compRes = this.compareVersionNumber(ios.ios, NativeVersion);
+                this.updateConfig.ios = ios;
+                this.updateConfig.message = message.updateInfo;
+                if (compRes) {
+                    this.setState({ showModal: true });
+                }
+            } else {
+            }
+        } catch (err) { }
+    }
+
+    loadData = async () => {
+        let url = urlConfig.sectionList;
+        console.log('sectionList', url);
+        let res = await HttpUtil.GET(url);
+        if (!res || !res.result) {
+            this.setState({ renderLoading: false });
+            this.setState({ renderError: true });
+            READ_CACHE(storageKeys.sectionList, (res) => {
+                if (res && res.length > 0) {
+                    this.setState({ sectionList: res });
+                } else {
+                }
+            }, (err) => {
+            });
+            return;
+        }
+        this.setState({ renderLoading: false });
+        this.setState({ renderError: false });
+        let result = res.result ? res.result : [];
+        WRITE_CACHE(storageKeys.sectionList, result);
+        this.setState({ sectionList: result });
+        console.log('res', res);
+    };
+    renderTab = (tabs) => {
+        let array = [];
+        array.push(tabs.map((item) => {
+            return <Text style={{ width: 50, height: 20 }}>{item}</Text>
+        }));
+        return array;
+    }
+    renderTabBar = (params) => {
+        global.activeTab = params.activeTab;
+        this.state.sectionList.forEach((v, i) => {
+            if (i === params.activeTab) {
+                global.activeClassId = v.classid
+            }
+        })
+
+        return <ScrollableTabBar style={{position:"absolute"}} activeTextColor='#f60' underlineStyle={{ height: 0, width: 0 }}
+            backgroundColor='white' textStyle={{ fontSize: 16, fontWeight: '100' }}
+            tabStyle={{ paddingLeft: 10, paddingRight: 10 }} />;
+    }
+    pageNumber = (number) => {
+        let page = 0;
+        this.state.sectionList.forEach((v, i) => {
+            if (parseInt(v.classid) === number) {
+                page = i
+            }
+        })
+        this.setState({ page: page });
+    }
+    renderContent = (sectionList) => {
+        let list = [];
+        list.push(sectionList.map((data, index) => {
+            return <Home tabLabel={data.classname} data={data} {...this.props} pageNumber={(number) => {
+                this.pageNumber(number)
+            }} index={index} />
+        }));
+        return list;
+    }
+    _renderError = (params) => {
+        return (
+            <View style={[styles.contain, { justifyContent: 'center', alignItems: 'center' }]}>
+                {/*  */}
+                <TouchableOpacity onPress={() => this.loadData()}>
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Image style={{ width: SCALE(323), height: SCALE(271) }} source={require('../assets/nonetwork.png')} />
+                        <Text style={{ fontSize: FONT(15), color: Color.C666666 }}>{params ? params : '网络无法连接，点击屏幕重试'}</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>)
+    };
+    _renderLoading = () => {
+        return (<View style={styles.contain}>
+
+            <LoadingSpinner type="normal" /></View>)
+    };
+    renderModal = () => {
+        if (Platform.OS === 'android') {
+            return <View style={styles.modalViewStyle}>
+                <View style={styles.hudViewStyle}>
+                    <View>
+                        <Text style={{ fontSize: 16, marginTop: 20, textAlign: 'center' }}>更新提示</Text>
+                    </View>
+                    <ScrollView style={{ marginVertical: 10, paddingHorizontal: 15 }} showsVerticalScrollIndicator={false}>
+                        <Text style={{ fontSize: 14 }}>{this.updateConfig.message}</Text>
+                    </ScrollView>
+                    {this.updateConfig.android.flag ?
+                        <TouchableOpacity activeOpacity={1} onPress={this.clickDownload}>
+                            <View style={{ flexDirection: 'row' }}><View style={{
+                                borderTopWidth: 1,
+                                borderColor: '#eeeeee',
+                                height: 30,
+                                width: 250,
+                                justifyContent: 'center'
+                            }}>
+                                <Text style={{ fontSize: 16, color: 'red', textAlign: 'center' }}>下载</Text>
+                            </View></View></TouchableOpacity> : <View style={{ flexDirection: 'row' }}>
+                            <TouchableOpacity activeOpacity={1} onPress={this.clickDownload}>
+                                <View style={{
+                                    borderTopWidth: 1,
+                                    borderColor: '#eeeeee',
+                                    height: 30,
+                                    width: 125,
+                                    justifyContent: 'center'
+                                }}>
+                                    <Text style={{ fontSize: 16, color: 'red', textAlign: 'center' }}>下载</Text>
+                                </View></TouchableOpacity>
+                            <TouchableOpacity activeOpacity={1} onPress={this.clickToCancelModal}><View style={{
+                                borderTopWidth: 1,
+                                borderLeftWidth: 1,
+                                height: 30,
+                                width: 125,
+                                borderColor: '#eeeeee',
+                                justifyContent: 'center'
+                            }}>
+                                <Text style={{ fontSize: 16, color: '#5c5c5c', textAlign: 'center' }}>取消</Text>
+                            </View></TouchableOpacity></View>}
+                </View>
+            </View>;
+        } else if (Platform.OS === 'ios') {
+            return <View style={styles.modalViewStyle}>
+                <View style={styles.hudViewStyle}>
+                    <View>
+                        <Text style={{ fontSize: 16, marginTop: 20, textAlign: 'center' }}>更新提示</Text>
+                    </View>
+                    <ScrollView style={{ marginVertical: 10, paddingHorizontal: 15 }} showsVerticalScrollIndicator={false}>
+                        <Text style={{ fontSize: 14 }}>{this.updateConfig.message}</Text>
+                    </ScrollView>
+                    {this.updateConfig.ios.flag ?
+                        <TouchableOpacity activeOpacity={1} onPress={this.clickDownload}>
+                            <View style={{ flexDirection: 'row' }}><View style={{
+                                borderTopWidth: 1,
+                                borderColor: '#eeeeee',
+                                height: 50,
+                                width: 250,
+                                justifyContent: 'center'
+                            }}>
+                                <Text style={{ fontSize: 16, color: 'red', textAlign: 'center' }}>立即更新</Text>
+                            </View></View></TouchableOpacity> : <View style={{ flexDirection: 'row' }}>
+                            <TouchableOpacity activeOpacity={1} onPress={this.clickDownload}>
+                                <View style={{
+                                    borderTopWidth: 1,
+                                    borderColor: '#eeeeee',
+                                    height: 50,
+                                    width: 125,
+                                    justifyContent: 'center'
+                                }}>
+                                    <Text style={{ fontSize: 16, color: 'red', textAlign: 'center' }}>立即更新</Text>
+                                </View></TouchableOpacity>
+                            <TouchableOpacity activeOpacity={1} onPress={this.clickToCancelModal}><View style={{
+                                borderTopWidth: 1,
+                                borderLeftWidth: 1,
+                                height: 50,
+                                width: 125,
+                                borderColor: '#eeeeee',
+                                justifyContent: 'center'
+                            }}>
+                                <Text style={{ fontSize: 16, color: '#5c5c5c', textAlign: 'center' }}>取消</Text>
+                            </View></TouchableOpacity></View>}
+                </View>
+            </View>;
+        } else { }
+
+    }
     render() {
         return (
-            <View>
-                <ScrollView>
-                    <View style={{ 
-                        padding: 20, 
-                        marginTop: StyleSheet.hairlineWidth,
-                        marginBottom: StyleSheet.hairlineWidth
-                        }}>
-                        <View style={{alignItems: 'center', justifyContent: 'center',paddingTop:10}}>
-                            <Text style={{ fontSize: 20 }}>
-                                {this.state.data.title}
-                            </Text>
-                        </View>
-                        {this.state.data.nurl ? <ImageProgress
-                            source={{ uri: this.state.data.nurl }}
-                            resizeMode={'center'}
-                            style={{ width: WIDTH - 40, height: 100 }} /> : null}
+            <View style={{ flex: 1 }}>
+                <View style={{
+                    padding: 30,
+                    paddingBottom: 40,
+                    marginTop: StyleSheet.hairlineWidth,
+                    marginBottom: StyleSheet.hairlineWidth,
+                    flexDirection: 'row',
+                    justifyContent: 'space-around',
+                    backgroundColor: '#fff'
+                }}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: 10 }}>
+                        <Image source={{ uri: this.state.data.nurl }} style={{ width: WIDTH * 0.4, height: 150 }} />
                     </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center',justifyContent:'center' }}>
+                    <View>
                         <TouchableOpacity
                             style={{ flexDirection: 'row', marginLeft: 10 }}
                             onPress={() => this.clickToShare('Session')}
                         >
                             <View style={styles.shareContent}>
-                                <Icon name="weixin" size={40} color='#f60' />
-                                <Text style={styles.spinnerTitle}>微信好友</Text>
+                                <Icon name="weixin" size={30} color='#f60' />
+                                <Text style={styles.spinnerTitle}>分享给微信好友</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -319,7 +640,7 @@ export  default  class Detail extends Component {
                             style={{ flexDirection: 'row', marginLeft: 10 }}
                         >
                             <View style={styles.shareContent}>
-                                <Icon name="folder-open-o" size={40} color='#6cbcff' />
+                                <Icon name="folder-open-o" size={30} color='#6cbcff' />
                                 <Text style={styles.spinnerTitle}>收藏表情</Text>
                             </View>
                         </TouchableOpacity>
@@ -329,7 +650,7 @@ export  default  class Detail extends Component {
                             style={{ flexDirection: 'row', marginLeft: 10 }}
                         >
                             <View style={styles.shareContent}>
-                                <MaterialIcons name="add-to-photos" size={40} color='#fa7b3d' />
+                                <MaterialIcons name="add-to-photos" size={30} color='#fa7b3d' />
                                 <Text style={styles.spinnerTitle}>保存到相册</Text>
                             </View>
                         </TouchableOpacity>
@@ -338,26 +659,30 @@ export  default  class Detail extends Component {
                             onPress={() => this.clickToReport()}
                         >
                             <View style={styles.shareContent}>
-                                <IconSimple name="exclamation" size={40} color='#fe96aa' />
-                                <Text style={styles.spinnerTitle}>举报</Text>
+                                <IconSimple name="exclamation" size={30} color='#fe96aa' />
+                                <Text style={styles.spinnerTitle}>举报表情</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
-                </ScrollView>
+                </View>
+                <ScrollableTabView renderTabBar={this.renderTabBar} page={this.state.page}>
+                    {this.renderContent(this.state.sectionList)}
+                </ScrollableTabView>
+                <Modal
+                    animationType='fade'        // 淡入淡出
+                    transparent={true}              // 透明
+                    visible={this.state.showModal}    // 根据isModal决定是否显示
+                    onRequestClose={() => { this.onRequestClose() }}  // android必须实现
+                >
+                    {this.renderModal()}
+                </Modal>
             </View>
         );
     }
+
 }
-
-const htmlStyles = StyleSheet.create({
-    p: {
-        fontSize: 16,
-        lineHeight: 30
-    },
-});
-
 const header = {
-    backgroundColor: '#C7272F',
+    backgroundColor: '#f60',
     ...ifIphoneX({
         paddingTop: 44,
         height: 88
@@ -371,25 +696,63 @@ const header = {
 }
 
 const styles = StyleSheet.create({
+    contain: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ffffff'
+    },
+    footer: {
+        height: 50,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderTopWidth: 1,
+        borderColor: "#CED0CE"
+    },
+    modalViewStyle: {
+        flex: 1,
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: '#0000007F',
+        justifyContent: 'center',
+        alignItems: 'center',
+
+    },
+    hudViewStyle: {
+        width: 250,
+        maxHeight: 300,
+        backgroundColor: 'white',
+        justifyContent: 'space-between',
+        borderRadius: 10
+    },
     shareParent: {
         flexDirection: 'row',
         marginTop: 10,
         marginBottom: 10
     },
     shareContent: {
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'center'
+        flexDirection: 'row',
+        paddingTop: 10
     },
     shareIcon: {
         width: 40,
         height: 40
     },
-    spinnerTitle:{
-        paddingTop: 10
+    spinnerTitle: {
+        paddingLeft: 10,
+        paddingTop: 8,
+        fontSize: 16,
+        textAlign: 'center',
+        alignItems: 'center'
     }
-    
-})
+
+});
+
+
 
 
 
