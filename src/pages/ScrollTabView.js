@@ -80,7 +80,8 @@ export  default  class ScrollTabView extends Component {
                     </TouchableOpacity>
                 </ImageBackground>
             )
-        }
+        },
+        header:null
     };
     //88  43.7 fontSize 17 fontWeight:600 RGBA0009 textALi;center
     constructor(props) {
@@ -372,7 +373,7 @@ export  default  class ScrollTabView extends Component {
                 }
             })
 
-            return <ScrollableTabBar activeTextColor='#f60' underlineStyle={{height: 0,width:0}}
+            return <ScrollableTabBar activeTextColor='#f60' underlineStyle={{ height: 0, width: 0 }} style={{ marginLeft: 10, marginRight: 10 }}
                                      backgroundColor='white' textStyle={{fontSize: 16, fontWeight:'100'}}
                                      tabStyle={{paddingLeft: 10, paddingRight: 10}} />;
         }
@@ -509,7 +510,7 @@ export  default  class ScrollTabView extends Component {
                 return this._renderError("暂无数据点击请求");
             }
             return (
-                <View style={{flex: 1}}>
+                <View style={styles.wrap}>
                     {/*  */}
                     <ScrollableTabView renderTabBar={this.renderTabBar} page={this.state.page}>
                         {this.renderContent(this.state.sectionList)}
@@ -544,6 +545,20 @@ export  default  class ScrollTabView extends Component {
     }
 
 const styles = StyleSheet.create({
+    wrap: {
+        flex: 1,
+        backgroundColor: '#fff',
+        ...ifIphoneX({
+            paddingTop: 44,
+            height: 88
+        }, {
+                paddingTop: Platform.OS === "ios" ? 20 : SCALE(StatusBarHeight()),
+                height: 64,
+            }),
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end'
+    },
     contain:{
         flex:1,
         justifyContent: 'center',

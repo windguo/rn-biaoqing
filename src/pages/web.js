@@ -45,7 +45,7 @@ export  default  class web extends Component {
     static navigationOptions = {
         header:({navigation}) =>{
             return (
-                <ImageBackground style={{ ...header }} source={require('../assets/backgroundImageHeader.png')} resizeMode='cover'>
+                <ImageBackground style={{ ...header }}>
                 <TouchableOpacity activeOpacity={1} onPress={() => {
                     navigation.goBack(null);
                 }}>
@@ -126,7 +126,7 @@ export  default  class web extends Component {
     _onRefresh = () =>{};
 }
 const header = {
-    backgroundColor: '#C7272F',
+    backgroundColor: '#fff',
     ...ifIphoneX({
         paddingTop: 44,
         height: 88

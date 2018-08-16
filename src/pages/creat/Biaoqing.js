@@ -1,15 +1,3 @@
-/**
- * Created by zhangzuohua on 2018/3/6.
- */
-/**
- * Created by zhangzuohua on 2018/1/19.
- */
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
     StyleSheet,
@@ -51,7 +39,7 @@ import storageKeys from '../../utils/storageKeyValue'
 import ScrollTabView from "../ScrollTabView";
 export default class Me extends Component {
     static navigationOptions = {
-        tabBarLabel: '生成表情',
+        tabBarLabel: 'DIY表情',
         tabBarIcon: ({ tintColor, focused }) => (
             <IconSimple name="user" size={22} color={focused ? "#f60" : 'black'} />
         ),

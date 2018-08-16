@@ -54,14 +54,7 @@ export default class SearchTag extends Component {
         header: ({ navigation }) => {
             let textinput;
             return (
-                <ImageBackground style={{ ...header }} source={require('../../assets/backgroundImageHeader.png')} resizeMode='cover'>
-                    <TouchableOpacity activeOpacity={1} onPress={() => {
-                        navigation.goBack(null);
-                    }}>
-                        <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7 }}>
-                            <IconSimple name="arrow-left" size={20} color='#282828' />
-                        </View>
-                    </TouchableOpacity>
+                <ImageBackground style={{ ...header }}>
                     <View style={{
                         flexDirection: 'row',
                         justifyContent: 'center', 
@@ -85,12 +78,12 @@ export default class SearchTag extends Component {
                                 color: '#555555',
                                 borderRadius: 10,
                                 marginHorizontal: 20, 
-                                width: WIDTH - 140,
+                                width: WIDTH - 120,
                                 height: 32,
                                 paddingHorizontal: 20,
                                 paddingTop:0,
                                 paddingBottom:0,
-                                backgroundColor: '#ffffff'
+                                backgroundColor: '#f5f5f5'
                             }}
                             underlineColorAndroid="transparent">
                         </TextInput>
@@ -212,7 +205,7 @@ export default class SearchTag extends Component {
 }
 
 const header = {
-    backgroundColor: '#C7272F',
+    backgroundColor: '#fff',
     ...ifIphoneX({
         paddingTop: 44,
         height: 88

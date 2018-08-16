@@ -51,18 +51,18 @@ import CustomImage from '../components/CustomImage'
 import GuessText from '../components/GuessText'
 export default class MyCollectLaugh extends Component {
     static navigationOptions = {
-        tabBarLabel: '本地收藏的表情',
+        tabBarLabel: '本地收藏',
         tabBarIcon: ({ tintColor, focused }) => (
             <IconSimple name="folder-alt" size={22} color={focused ? "#f60" : 'black'} />
         ),
         header: ({ navigation }) => {
             return (
-                <ImageBackground style={{ ...header }} source={require('../assets/backgroundImageHeader.png')} resizeMode='cover'>
+                <ImageBackground style={{ ...header }}>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                         navigation.goBack(null);
                     }}>
                         <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
-                            <IconSimple name="arrow-left" size={20} color='#282828' />
+                            
                         </View>
                     </TouchableOpacity>
                     <Text style={{ fontSize: 17, textAlign: 'center', fontWeight: '300', lineHeight: 43.7, color: '#282828' }}>本地收藏的表情</Text>
@@ -226,28 +226,21 @@ export default class MyCollectLaugh extends Component {
         this.props.navigation.navigate('Web', { url: url });
     }
     renderTextAndImage = (item, index) => {
-        return <View>
-            <View>
-                <Text activeOpacity={0.8} onPress={() => {
+        return (
+            <View style={styles.sectionChild}>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => {
                     this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
-                }} style={{ fontSize: 18, paddingBottom: 10 }}>{item.title}</Text>
+                }}>
+                    <Image source={{ uri: item.nurl }} style={{ width: WIDTH * 0.3, height: 100, borderRadius: 10 }} />
+                </TouchableOpacity>
+                <TouchableOpacity activeOpacity={0.8}
+                    onPress={() => {
+                        this.removeStorage(item);
+                    }} style={{ alignItems: 'center', paddingTop: 10, paddingBottom: 10}}>
+                    <Text>移出收藏</Text>
+                </TouchableOpacity>
             </View>
-            <Text activeOpacity={0.8} onPress={() => {
-                this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
-            }} style={{ lineHeight: 26, fontSize: 16, color: '#555' }}>
-                {item.nurl ? <ImageProgress
-                    source={{ uri: item.nurl }}
-                    resizeMode={'center'}
-                    indicator={Pie}
-                    indicatorProps={{
-                        size: 40,
-                        borderWidth: 0,
-                        color: 'rgba(255, 160, 0, 0.8)',
-                        unfilledColor: 'rgba(200, 200, 200, 0.1)'
-                    }}
-                    style={{ width: WIDTH - 40, height: 100 }} /> : null}
-            </Text>
-        </View>
+        )
     }
 
     removeStorage = (item) => {
@@ -288,38 +281,15 @@ export default class MyCollectLaugh extends Component {
 
     _renderItem = ({ item, index }) => {
         return (
-            <TouchableOpacity activeOpacity={1} onPress={() => {
-            }}>
-                <View>
-                    {index === 0 ? <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} /> : <View />}
-                    <View style={{ backgroundColor: 'white', paddingHorizontal: 20, paddingTop: 20 }}>
-                        {this.renderTextAndImage(item, index)}
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                marginTop: 15,
-                                marginBottom: 15,
-                                justifyContent: 'space-between'
-                            }}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity activeOpacity={1}
-                                    onPress={() => {
-                                        this.removeStorage(item);
-                                    }}
-                                    hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                                    <Text style={{ color: '#c30' }}>移出收藏</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-            </TouchableOpacity>
+            <View style={styles.sectionParent}>
+                {this.renderTextAndImage(item, index)}
+            </View>
         )
     }
     _keyExtractor = (item, index) => index;
     render() {
         return (
-            <View style={{ flex: 1 }} >
+            <View style={{ flex: 1,paddingTop:10 }} >
                 <PullList
                     //  data={this.state.data}
                     keyExtractor={this._keyExtractor}
@@ -365,6 +335,19 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 5
     },
+    sectionParent: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        paddingLeft: 10,
+        paddingBottom: 10
+    },
+    sectionChild: {
+        flex: 1,
+        flexBasis: WIDTH * 0.3,
+        borderRadius: 10,
+        backgroundColor: '#fff'
+    },
     shareParent: {
         flexDirection: 'row',
         marginTop: 10,
@@ -381,7 +364,7 @@ const styles = StyleSheet.create({
     }
 });
 const header = {
-    backgroundColor: '#C7272F',
+    backgroundColor: '#fff',
     ...ifIphoneX({
         paddingTop: 44,
         height: 88

@@ -59,7 +59,7 @@ export default class Search extends Component {
         header: ({ navigation }) => {
             let textinput;
             return (
-                <ImageBackground style={{ ...header }} source={require('../../assets/backgroundImageHeader.png')} resizeMode='cover'>
+                <ImageBackground style={{ ...header }}>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                         navigation.goBack(null);
                     }}>
@@ -390,28 +390,11 @@ export default class Search extends Component {
         }catch (e){}
     }
     renderTextAndImage = (item, index) => {
-        return <View>
-            <View>
-                <Text activeOpacity={0.8} onPress={() => {
-                    this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
-                }} style={{ fontSize: 18, paddingBottom: 10 }}>{item.title}</Text>
+        return (
+            <View style={styles.sectionChild}>
+                <Image source={{ uri: item.nurl }} style={{ width: WIDTH * 0.3, height: 100, borderRadius: 10 }} />
             </View>
-            <Text activeOpacity={0.8} onPress={() => {
-                this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
-            }} style={{ lineHeight: 26, fontSize: 16, color: '#555' }}>
-                {item.nurl ? <ImageProgress
-                    source={{ uri: item.nurl }}
-                    resizeMode={'center'}
-                    indicator={Pie}
-                    indicatorProps={{
-                        size: 40,
-                        borderWidth: 0,
-                        color: 'rgba(255, 160, 0, 0.8)',
-                        unfilledColor: 'rgba(200, 200, 200, 0.1)'
-                    }}
-                    style={{ width: WIDTH - 40, height: 100 }} /> : null}
-            </Text>
-        </View>
+        )
     }
     clickToFavas = (classid,id) => {
         let url = urlConfig.FavasURL + '/' + classid + '/' + id;
@@ -437,15 +420,13 @@ export default class Search extends Component {
             </TouchableOpacity>
         }
         return (
-            <TouchableOpacity activeOpacity={1} onPress={() => {
-            }}>
-                <View>
-                    {index === 0 ? <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} /> : <View />}
-                    <View style={{ backgroundColor: 'white', paddingHorizontal: 20, paddingTop: 20 }}>
-                        {this.renderTextAndImage(item, index)}
-                    </View>
-                </View>
-            </TouchableOpacity>
+            <View style={styles.sectionParent}>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                    this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
+                }}>
+                    {this.renderTextAndImage(item, index)}
+                </TouchableOpacity>
+            </View>
         )
     }
 
@@ -453,7 +434,7 @@ export default class Search extends Component {
 
     render() {
         return (
-            <View style={{flex: 1}} >
+            <View style={{flex: 1,paddingTop:10}} >
                 <PullList
                     //  data={this.state.data}
                   //  contentContainerStyle={{justifyContent:"center", alignItems:'center'}}
@@ -471,7 +452,7 @@ export default class Search extends Component {
 
 }
 const header = {
-    backgroundColor: '#C7272F',
+    backgroundColor: '#fff',
     ...ifIphoneX({
         paddingTop: 44,
         height: 88
@@ -484,6 +465,19 @@ const header = {
      alignItems: 'flex-end'
 }
 const styles = StyleSheet.create({
+    sectionParent: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        paddingLeft: 10,
+        paddingBottom: 10
+    },
+    sectionChild: {
+        flex: 1,
+        flexBasis: WIDTH * 0.3,
+        borderRadius: 10,
+        backgroundColor: '#fff'
+    },
     base: {
         flex: 1
     },

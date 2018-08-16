@@ -1,12 +1,3 @@
-/**
- * Created by zhangzuohua on 2018/1/22.
- */
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
     StyleSheet,
@@ -30,9 +21,9 @@ import {
     DeviceEventEmitter,
     LayoutAnimation,
     NativeModules,
-    CameraRoll,
     ImageBackground,
     FlatList,
+    CameraRoll,
     AppState,
     NetInfo,
     Modal
@@ -44,6 +35,7 @@ const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 import { ifIphoneX } from '../utils/iphoneX';
 import Home from './Home';
+import codePush from 'react-native-code-push'
 import SplashScreen from 'react-native-splash-screen'
 import * as WeChat from 'react-native-wechat';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
@@ -51,8 +43,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import urlConfig from '../utils/urlConfig';
 import storageKeys from '../utils/storageKeyValue';
 var DeviceInfo = require('react-native-device-info');
-import Toast from 'react-native-root-toast';
 import JPushModule from 'jpush-react-native';
+import Toast from 'react-native-root-toast';
 import HttpUtil from '../utils/HttpUtil';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const NativeVersion = DeviceInfo.getVersion();
@@ -64,12 +56,12 @@ export default class ScrollTabView extends Component {
         ),
         header: ({ navigation }) => {
             return (
-                <ImageBackground style={{ ...header }} source={require('../assets/backgroundImageHeader.png')} resizeMode='cover'>
+                <ImageBackground style={{ ...header }}>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                         navigation.goBack(null);
                     }}>
                         <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
-                            <IconSimple name="arrow-left" size={20} color='#282828' />
+                            <IconSimple name="arrow-left" size={25} color='#282828' />
                         </View>
                     </TouchableOpacity>
                     <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>{navigation.state.routes[navigation.state.index].params && navigation.state.routes[navigation.state.index].params.title}</Text>
@@ -77,7 +69,7 @@ export default class ScrollTabView extends Component {
                         navigation.navigate('New')
                     }}>
                         <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7, width: 30 }}>
-                            <IconSimple name="home" size={20} color='#282828' />
+                            <IconSimple name="home" size={25} color='#282828' />
                         </View>
                     </TouchableOpacity>
                 </ImageBackground>
@@ -108,6 +100,32 @@ export default class ScrollTabView extends Component {
             }
         })
     }
+
+    //保存图片
+    saveImg(img) {
+        var promise = CameraRoll.saveToCameraRoll(img);
+        promise.then(function (result) {
+            Toast.show('保存成功,请到相册查看。', {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
+        }).catch(function (error) {
+            Toast.show('保存失败！\n' + error, {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
+        });
+    }
+    _keyExtractor = (item, index) => index;
+
     readUserCache = () => {
         READ_CACHE(storageKeys.userInfo, (res) => {
             if (res && res.userid) {
@@ -151,144 +169,6 @@ export default class ScrollTabView extends Component {
         NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
 
     }
-    componentDidMount() {
-        this.loadContentData();
-        this.readUserCache();
-        if (Platform.OS === 'android') {
-            NativeModules.NativeUtil.StatusBar();
-        }
-        InteractionManager.runAfterInteractions(() => {
-            this.loadData();
-            this.checkAppUpdateMessage();
-            this.setState({ renderLoading: true });
-        });
-
-
-    }
-    clickToShare = (type) => {
-        console.log('XXXXXXXXXXXXX', urlConfig.thumbImage);
-        this.close();
-        WeChat.isWXAppInstalled().then((isInstalled) => {
-            if (isInstalled) {
-                if (type === 'Session') {
-                    WeChat.shareToSession({
-                        imageUrl: this.state.data && this.state.data.nurl,
-                        titlepicUrl: this.state.data && this.state.data.titlepic,
-                        type: 'imageUrl',
-                        webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
-                    }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((e) => {
-                        if (error.message != -2) {
-                            Toast.show(error.message);
-                        }
-                    });
-                } else {
-                    WeChat.shareToTimeline({
-                        imageUrl: this.state.data && this.state.data.nurl,
-                        type: 'imageUrl',
-                        webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
-                    }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
-                        if (error.message != -2) {
-                            Toast.show(error.message);
-                        }
-                    });
-                }
-            } else {
-            }
-        });
-    }
-    show = (item) => {
-        this.state.data = item;
-        if (Platform.OS === 'android') {
-            this.share()
-            return;
-        }
-        this._ViewHeight.setValue(0);
-        this.setState({
-            visible: true
-        }, Animated.timing(this._ViewHeight, {
-            fromValue: 0,
-            toValue: 140, // 目标值
-            duration: 200, // 动画时间
-            easing: Easing.linear // 缓动函数
-        }).start());
-    };
-    close = () => {
-        this.setState({
-            visible: false
-        });
-    };
-    share = async () => {
-        let data = await NativeModules.NativeUtil.showDialog();
-        if (data.wechat === 3) {
-            this.clickToReport();
-            return;
-        }
-        if (data) {
-            WeChat.isWXAppInstalled().then((isInstalled) => {
-                if (isInstalled) {
-                    if (data.wechat === 1) {
-                        WeChat.shareToSession({
-                            imageUrl: this.state.data && this.state.data.nurl,
-                            titlepicUrl: this.state.data && this.state.data.titlepic,
-                            type: 'imageUrl',
-                            webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
-                        }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
-                            if (error.message != -2) {
-                                Toast.show(error.message);
-                            }
-                        });
-                    } else if (data.wechat === 2) {
-                        WeChat.shareToSession({
-                            imageUrl: this.state.data && this.state.data.nurl,
-                            titlepicUrl: this.state.data && this.state.data.titlepic,
-                            type: 'imageUrl',
-                            webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
-                        }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
-                            if (error.message != -2) {
-                                Toast.show(error.message);
-                            }
-                        });
-                    }
-                } else {
-                    Toast.show("没有安装微信软件，请您安装微信之后再试");
-                }
-            });
-            console.log('data', data)
-        }
-    };
-    clickToReport = () => {
-        let url = urlConfig.ReportURL + '/' + this.state.data.classid + '/' + this.state.data.id;
-        this.props.navigation.navigate('Web', { url: url });
-        this.close();
-    }
-    clickToFava = () => {
-        let resu = {
-            title: this.state.data.title,
-            id: this.state.data.id,
-            classid: this.state.data.classid,
-            nurl: this.state.data.nurl,
-            titlepic: this.state.data.titlepic,
-        };
-        this.resuleArray.push(resu);
-        WRITE_CACHE(storageKeys.MyCollectList, this.resuleArray);
-        Toast.show('本地收藏【' + this.state.data.title + '】成功,\n请到本地表情查看。', {
-            duration: Toast.durations.SHORT,
-            position: Toast.positions.CENTER,
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-        });
-        // READ_CACHE(storageKeys.MyCollectList, (res) => {
-        //     console.log('===res===', res);
-        //     return false;
-        //     if (res && res.length > 0) {
-        //         this.setState({ sectionList: res });
-        //     } else {
-        //     }
-        // }, (err) => {
-        // });
-    }
     loadContentData = async (resolve) => {
         let url = urlConfig.DetailUrl + '&id=' + this.props.navigation.state.params.id;
         console.log('loadUrl', url);
@@ -303,29 +183,82 @@ export default class ScrollTabView extends Component {
         });
         console.log('res', res);
     };
-
-    //保存图片
-    saveImg(img) {
-        var promise = CameraRoll.saveToCameraRoll(img);
-        promise.then(function (result) {
-            Toast.show('保存成功,请到相册查看。', {
-                duration: Toast.durations.SHORT,
-                position: Toast.positions.CENTER,
-                shadow: true,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-            });
-        }).catch(function (error) {
-            Toast.show('保存失败！\n' + error, {
-                duration: Toast.durations.SHORT,
-                position: Toast.positions.CENTER,
-                shadow: true,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-            });
+    componentDidMount() {
+        this.loadContentData();
+        this.readUserCache();
+        if (Platform.OS === 'android') {
+            NativeModules.NativeUtil.StatusBar();
+        }
+        WeChat.registerApp('wx65594c1aaffccbb9');
+        this.props.navigation.setParams({
+            rightFuc: () => {
+                this.props.navigation.navigate('LocalBiaoqingCollection')
+            },
+            leftFuc: () => {
+                this.props.navigation.navigate('SearchTag');
+            }
         });
+        InteractionManager.runAfterInteractions(() => {
+            this.loadData();
+            this.checkAppUpdateMessage();
+            this.setState({ renderLoading: true });
+        });
+
+
+    }
+
+    //这里执行要跳转的页面
+    jumpToOther = () => {
+        console.log('JPushModule jump to SecondActivity')
+        //  this.props.navigation.navigate('Test')
+    }
+
+    InitJPush = () => {
+        if (Platform.OS === 'android') {
+            JPushModule.initPush();
+            JPushModule.getInfo(map => {
+                this.setState({
+                    appkey: map.myAppKey,
+                    imei: map.myImei,
+                    package: map.myPackageName,
+                    deviceId: map.myDeviceId,
+                    version: map.myVersion
+                })
+            })
+            JPushModule.notifyJSDidLoad(resultCode => {
+                if (resultCode === 0) {
+                }
+            })
+        }
+
+        if (Platform.OS === 'ios') {
+            JPushModule.setupPush();
+            JPushModule.setBadge(0, success => { })
+        }
+
+        // JPushModule.addReceiveCustomMsgListener(map => {
+        //     console.log('JPushModule CustomMsgextras: ' + map.extras)
+        //     console.log('JPushModule CustomMsg',map.toString());
+        // })
+
+        // JPushModule.addReceiveNotificationListener(map => {
+        //     console.log('JPushModule Notification alertContent: ' + map.alertContent)
+        //     console.log('JPushModule Notification extras: ' + map.extras)
+        //    /// var extra = JSON.parse(map.extras);
+        //     console.log("JPushModule Notification",extra.key + ": " + extra.value);
+        // })
+
+        //点击回调这个函数
+        // JPushModule.addReceiveOpenNotificationListener(map => {
+        //     console.log('JPushModule Openingnotification!')
+        //     console.log('JPushModule map.extra: ' + map.extras)
+        //     this.jumpToOther()
+        //     // JPushModule.jumpToPushActivity("SecondActivity");
+        // })
+
+        // JPushModule.addGetRegistrationIdListener(registrationId => {
+        //     console.log('JPushModule Device register succeed, registrationId ' + registrationId)
+        // })
     }
 
     componentWillUnmount() {
@@ -609,17 +542,132 @@ export default class ScrollTabView extends Component {
         } else { }
 
     }
+    clickToShare = (type) => {
+        console.log('XXXXXXXXXXXXX', urlConfig.thumbImage);
+        this.close();
+        WeChat.isWXAppInstalled().then((isInstalled) => {
+            if (isInstalled) {
+                if (type === 'Session') {
+                    WeChat.shareToSession({
+                        imageUrl: this.state.data && this.state.data.nurl,
+                        titlepicUrl: this.state.data && this.state.data.titlepic,
+                        type: 'imageUrl',
+                        webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
+                    }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((e) => {
+                        if (error.message != -2) {
+                            Toast.show(error.message);
+                        }
+                    });
+                } else {
+                    WeChat.shareToTimeline({
+                        imageUrl: this.state.data && this.state.data.nurl,
+                        type: 'imageUrl',
+                        webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
+                    }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
+                        if (error.message != -2) {
+                            Toast.show(error.message);
+                        }
+                    });
+                }
+            } else {
+            }
+        });
+    }
+    show = (item) => {
+        this.state.data = item;
+        if (Platform.OS === 'android') {
+            this.share()
+            return;
+        }
+        this._ViewHeight.setValue(0);
+        this.setState({
+            visible: true
+        }, Animated.timing(this._ViewHeight, {
+            fromValue: 0,
+            toValue: 140, // 目标值
+            duration: 200, // 动画时间
+            easing: Easing.linear // 缓动函数
+        }).start());
+    };
+    close = () => {
+        this.setState({
+            visible: false
+        });
+    };
+    share = async () => {
+        let data = await NativeModules.NativeUtil.showDialog();
+        if (data.wechat === 3) {
+            this.clickToReport();
+            return;
+        }
+        if (data) {
+            WeChat.isWXAppInstalled().then((isInstalled) => {
+                if (isInstalled) {
+                    if (data.wechat === 1) {
+                        WeChat.shareToSession({
+                            imageUrl: this.state.data && this.state.data.nurl,
+                            titlepicUrl: this.state.data && this.state.data.titlepic,
+                            type: 'imageUrl',
+                            webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
+                        }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
+                            if (error.message != -2) {
+                                Toast.show(error.message);
+                            }
+                        });
+                    } else if (data.wechat === 2) {
+                        WeChat.shareToSession({
+                            imageUrl: this.state.data && this.state.data.nurl,
+                            titlepicUrl: this.state.data && this.state.data.titlepic,
+                            type: 'imageUrl',
+                            webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
+                        }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
+                            if (error.message != -2) {
+                                Toast.show(error.message);
+                            }
+                        });
+                    }
+                } else {
+                    Toast.show("没有安装微信软件，请您安装微信之后再试");
+                }
+            });
+            console.log('data', data)
+        }
+    };
+    clickToReport = () => {
+        let url = urlConfig.ReportURL + '/' + this.state.data.classid + '/' + this.state.data.id;
+        this.props.navigation.navigate('Web', { url: url });
+        this.close();
+    }
+    clickToFava = () => {
+        let resu = {
+            title: this.state.data.title,
+            id: this.state.data.id,
+            classid: this.state.data.classid,
+            nurl: this.state.data.nurl,
+            titlepic: this.state.data.titlepic,
+        };
+        this.resuleArray.push(resu);
+        WRITE_CACHE(storageKeys.MyCollectList, this.resuleArray);
+        Toast.show('本地收藏【' + this.state.data.title + '】成功,\n请到本地表情查看。', {
+            duration: Toast.durations.SHORT,
+            position: Toast.positions.CENTER,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+        });
+    }
     render() {
         return (
             <View style={{ flex: 1 }}>
+                <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} />
                 <View style={{
-                    padding: 30,
-                    paddingBottom: 40,
+                    padding: 20,
                     marginTop: StyleSheet.hairlineWidth,
                     marginBottom: StyleSheet.hairlineWidth,
                     flexDirection: 'row',
-                    justifyContent: 'space-around',
-                    backgroundColor: '#fff'
+                    backgroundColor:'#fff',
+                    justifyContent: 'space-around'
                 }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: 10 }}>
                         <Image source={{ uri: this.state.data.nurl }} style={{ width: WIDTH * 0.4, height: 150 }} />
@@ -660,7 +708,7 @@ export default class ScrollTabView extends Component {
                         >
                             <View style={styles.shareContent}>
                                 <IconSimple name="exclamation" size={30} color='#fe96aa' />
-                                <Text style={styles.spinnerTitle}>举报表情</Text>
+                                <Text style={styles.spinnerTitle}>举报</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -677,12 +725,13 @@ export default class ScrollTabView extends Component {
                     {this.renderModal()}
                 </Modal>
             </View>
+
         );
     }
 
 }
 const header = {
-    backgroundColor: '#f60',
+    backgroundColor: '#fff',
     ...ifIphoneX({
         paddingTop: 44,
         height: 88
