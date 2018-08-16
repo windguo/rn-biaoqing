@@ -253,11 +253,20 @@ export default class Home extends Component {
         }
         return (
             <View style={styles.sectionParent}>
-                <TouchableOpacity activeOpacity={0.8} onPress={() => {
-                    this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
-                }}>
-                    {this.renderTextAndImage(item, index)}
-                </TouchableOpacity>
+                {
+                    item.classid == 183 ?
+                        <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                            this.props.navigation.navigate('creatBiaoqing', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
+                        }}>
+                            {this.renderTextAndImage(item, index)}
+                        </TouchableOpacity>
+                    :
+                        <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                            this.props.navigation.navigate('Detail', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
+                        }}>
+                            {this.renderTextAndImage(item, index)}
+                        </TouchableOpacity>
+                }
             </View>
         )
     }

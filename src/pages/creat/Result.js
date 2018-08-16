@@ -74,64 +74,17 @@ export default class Me extends Component {
             userName: null,
             top: 100,
             left: 20,
-            tureWidth: 10,
-            tureHeight: 10,
-            text: this.props.navigation.state.params.title,
             width: 100,
-            height:100
+            height:100,
+            
         };
     }
     componentWillMount() {
         this._ViewHeight = new Animated.Value(0);
-        this._panResponder = PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponder: () => true,
-            onPanResponderGrant: () => {
-                this._top = this.state.top
-                this._left = this.state.left
-                this.setState({ bg: 'red' })
-            },
-            onPanResponderMove: (evt, gs) => {
-                console.log(gs.dx + ' ' + gs.dy)
-                this.setState({
-                    top: this._top + gs.dy,
-                    left: this._left + gs.dx
-                })
-            },
-            onPanResponderRelease: (evt, gs) => {
-                this.setState({
-                    bg: 'white',
-                    top: this._top + gs.dy,
-                    left: this._left + gs.dx
-                })
-            }
-        })
+        
     }
     componentWillUnmount() {
         this.subscription.remove();
-        this._panResponder = PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponder: () => true,
-            onPanResponderGrant: () => {
-                this._top = this.state.top
-                this._left = this.state.left
-                this.setState({ bg: 'red' })
-            },
-            onPanResponderMove: (evt, gs) => {
-                console.log(gs.dx + ' ' + gs.dy)
-                this.setState({
-                    top: this._top + gs.dy,
-                    left: this._left + gs.dx
-                })
-            },
-            onPanResponderRelease: (evt, gs) => {
-                this.setState({
-                    bg: 'white',
-                    top: this._top + gs.dy,
-                    left: this._left + gs.dx
-                })
-            }
-        })
     }
     componentDidMount() {
         this.loadContentData();
@@ -143,6 +96,7 @@ export default class Me extends Component {
                 this.getImagesSize();
             }
         );
+        console.log('http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + ' + &width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y);
     }
 
     getImagesSize = () =>{
@@ -151,8 +105,8 @@ export default class Me extends Component {
             //height 图片的高度
             let proportion = screenWidth;
             let myHeight = Math.floor(screenWidth / width * height);
-            console.log('tureWidthtureWidthtureWidth', width);
-            this.setState({ width: proportion, height: myHeight,tureWidth:width,tureHeight:height });
+            
+            this.setState({ width: proportion, height: myHeight });
         })
     }
     LoginSuccess = () => {
@@ -246,39 +200,11 @@ export default class Me extends Component {
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: Color.f5f5f5 }}>
-                <Image source={{ uri: this.state.data.nurl }} style={{ width: this.state.tureWidth, height: this.state.tureHeight }} />
-                <View
-                    {...this._panResponder.panHandlers}
-                    style={[styles.rect, {
-                        position:'absolute',
-                        top: this.state.top,
-                        left: this.state.left,
-                        borderWidth:1,
-                        borderStyle: 'dashed',
-                        padding:10
-                    }]}>
-                    <Text>{this.state.text}</Text>
-                </View>
-                <TextInput 
-                    style={styles.textInputStyle} 
-                    defaultValue={this.state.data.title}
-                    onChangeText={(text) => this.setState({ text })}
-                >
-                </TextInput>
-                <TouchableOpacity activeOpacity={0.8} onPress={() => {
-                    this.props.navigation.navigate('creatBiaoqingResult', { 
-                        id: this.state.data.id, 
-                        title: this.state.text, 
-                        nurl: this.state.data.nurl, 
-                        x:this.state.left+15,
-                        y:this.state.top+15,
-                        width: this.state.tureWidth,
-                        height: this.state.tureHeight,
-                        classid: this.state.data.classid 
-                    });
-                }}>
-                    <Text>立即生成</Text>
-                </TouchableOpacity>
+                <Image source={{ 
+                    uri: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + ' + &width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y
+                    }} 
+                    style={{ width: this.props.navigation.state.params.width, height: this.props.navigation.state.params.height }} 
+                />
                 <PureModalUtil
                     visible={this.state.visible}
                     close={this.close}
