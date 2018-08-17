@@ -200,11 +200,14 @@ export default class Me extends Component {
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: Color.f5f5f5 }}>
-                <Image source={{ 
-                    uri: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + ' + &width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y
-                    }} 
-                    style={{ width: this.props.navigation.state.params.width, height: this.props.navigation.state.params.height }} 
-                />
+                <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} />
+                <View style={{alignItems:'center'}}>
+                    <Image source={{
+                        uri: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + ' + &width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y
+                    }}
+                        style={{ width: this.props.navigation.state.params.width, height: this.props.navigation.state.params.height }}
+                    />
+                </View>
                 <PureModalUtil
                     visible={this.state.visible}
                     close={this.close}

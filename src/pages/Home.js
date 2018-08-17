@@ -256,7 +256,7 @@ export default class Home extends Component {
                 {
                     item.classid == 183 ?
                         <TouchableOpacity activeOpacity={0.8} onPress={() => {
-                            this.props.navigation.navigate('creatBiaoqing', { id: item.id, title: item.title, nurl: item.nurl, classid: item.classid });
+                            this.props.navigation.navigate('creatBiaoqing', { id: item.id, x: item.x, y: item.y, title: item.title, titlepic: item.titlepic, classid: item.classid });
                         }}>
                             {this.renderTextAndImage(item, index)}
                         </TouchableOpacity>

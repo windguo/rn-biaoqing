@@ -20,7 +20,7 @@ export default urlConfig = {
     // sectionList:'/e/api/?getJson=class',
     sectionList:'/e/api/biaoqing?getJson=class',
 //随机
-    sectionListRand:'/e/api/biaoqing?getJson=classRand',
+    sectionListRand:'/e/api/biaoqing/?getJson=column&classid=183',
     //栏目列表数据后面拼接&classid=3
     // sectionListData:'/e/api/?getJson=column',
     sectionListData:'/e/api/biaoqing?getJson=column',

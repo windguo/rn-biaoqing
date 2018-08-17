@@ -38,6 +38,8 @@ import * as WeChat from 'react-native-wechat';
 import HttpUtil from '../../utils/HttpUtil';
 import storageKeys from '../../utils/storageKeyValue'
 import ScrollTabView from "../ScrollTabView";
+import ImageProgress from 'react-native-image-progress';
+import ProgressBar from 'react-native-progress/Bar';
 let screenWidth = Dimensions.get('window').width;
 let screenHeight = Dimensions.get('window').height;
 
@@ -57,7 +59,7 @@ export default class Me extends Component {
                             <IconSimple name="arrow-left" size={25} color='#282828' />
                         </View>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>生成表情</Text>
+                    <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>DIY表情生成</Text>
                     <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7 }}></View>
                 </ImageBackground>
             )
@@ -72,11 +74,13 @@ export default class Me extends Component {
             username: '',
             userpwd: '',
             userName: null,
-            top: 100,
-            left: 20,
-            tureWidth: 10,
-            tureHeight: 10,
+            top: parseInt(this.props.navigation.state.params.y),
+            left: parseInt(this.props.navigation.state.params.x),
+            bg:'',
+            trueWidth: 150,
+            trueHeight: 150,
             text: this.props.navigation.state.params.title,
+            fontSize:14,
             width: 100,
             height:100
         };
@@ -151,8 +155,8 @@ export default class Me extends Component {
             //height 图片的高度
             let proportion = screenWidth;
             let myHeight = Math.floor(screenWidth / width * height);
-            console.log('tureWidthtureWidthtureWidth', width);
-            this.setState({ width: proportion, height: myHeight,tureWidth:width,tureHeight:height });
+            console.log('trueWidthtrueWidthtrueWidth', width);
+            this.setState({ width: proportion, height: myHeight,trueWidth:width,trueHeight:height });
         })
     }
     LoginSuccess = () => {
@@ -246,38 +250,57 @@ export default class Me extends Component {
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: Color.f5f5f5 }}>
-                <Image source={{ uri: this.state.data.nurl }} style={{ width: this.state.tureWidth, height: this.state.tureHeight }} />
-                <View
-                    {...this._panResponder.panHandlers}
-                    style={[styles.rect, {
-                        position:'absolute',
-                        top: this.state.top,
-                        left: this.state.left,
-                        borderWidth:1,
-                        borderStyle: 'dashed',
-                        padding:10
-                    }]}>
-                    <Text>{this.state.text}</Text>
+                <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} />
+                <View style={{alignItems:'center'}}>
+                    <View style={{ marginTop: 10, marginBottom: 10 }}>
+                        <ImageProgress
+                            source={{ uri: this.state.data.nurl }}
+                            resizeMode={'cover'}
+                            indicatorProps={{
+                                size: 30,
+                                borderWidth: 1,
+                                color: 'rgba(255, 160, 0, 0.8)',
+                                unfilledColor: 'rgba(200, 200, 200, 0.1)'
+                            }}
+                            indicator={ProgressBar}
+                            style={{ width: this.state.trueWidth, height: this.state.trueHeight }} />
+                    </View>
+                    <View
+                        {...this._panResponder.panHandlers}
+                        style={[styles.rect, {
+                            position: 'absolute',
+                            top: this.state.top,
+                            left: this.state.left,
+                            borderWidth: 1,
+                            borderStyle: 'dashed',
+                            padding: 4
+                        }]}>
+                        <Text style={{ fontSize: 18 }}>{this.state.text}</Text>
+                    </View>
+                    <TextInput
+                        style={styles.textInputStyle}
+                        clearTextOnFocus={true}
+                        defaultValue={this.state.text}
+                        onChangeText={(text) => this.setState({ text })}
+                    >
+                    </TextInput>
                 </View>
-                <TextInput 
-                    style={styles.textInputStyle} 
-                    defaultValue={this.state.data.title}
-                    onChangeText={(text) => this.setState({ text })}
-                >
-                </TextInput>
-                <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                <TouchableOpacity style={{alignItems: 'center', marginTop: 20}} activeOpacity={0.8} onPress={() => {
                     this.props.navigation.navigate('creatBiaoqingResult', { 
                         id: this.state.data.id, 
                         title: this.state.text, 
                         nurl: this.state.data.nurl, 
-                        x:this.state.left+15,
-                        y:this.state.top+15,
-                        width: this.state.tureWidth,
-                        height: this.state.tureHeight,
+                        x: this.state.left - (screenWidth - this.state.trueWidth) / 2,
+                        y: this.state.top+10,
+                        fontSize: this.state.fontSize,
+                        width: this.state.trueWidth,
+                        height: this.state.trueHeight,
                         classid: this.state.data.classid 
                     });
                 }}>
-                    <Text>立即生成</Text>
+                    <View style={{ width: '90%', padding: 15, backgroundColor: '#f60',borderRadius: 8}}>
+                        <Text style={{ textAlign: 'center',color:'#fff',fontSize:16}}>立即生成表情</Text>
+                    </View>
                 </TouchableOpacity>
                 <PureModalUtil
                     visible={this.state.visible}
@@ -302,6 +325,16 @@ const header = {
     alignItems: 'flex-end'
 }
 const styles = StyleSheet.create({
+    textInputStyle:{
+        borderWidth:StyleSheet.hairlineWidth,
+        borderColor:'#ccc',
+        width:'90%',
+        marginTop:15,
+        borderRadius:8,
+        padding:10,
+        backgroundColor: '#FFF',
+        fontSize:16
+    },
     base: {
         flex: 1
     },
