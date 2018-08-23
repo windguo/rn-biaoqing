@@ -17,6 +17,7 @@ import {
     BackHandler,
     ScrollView,
     TouchableWithoutFeedback,
+    CameraRoll,
     RefreshControl,
     DeviceEventEmitter,
     LayoutAnimation,
@@ -34,7 +35,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import urlConfig from '../../utils/urlConfig';
 import PureModalUtil from '../../utils/PureModalUtil';
+import Toast from 'react-native-root-toast';
 import * as WeChat from 'react-native-wechat';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import HttpUtil from '../../utils/HttpUtil';
 import storageKeys from '../../utils/storageKeyValue'
 import ScrollTabView from "../ScrollTabView";
@@ -79,7 +82,132 @@ export default class Me extends Component {
             
         };
     }
+
+    clickToReport = () => {
+        let url = urlConfig.ReportURL + '/' + this.state.data.classid + '/' + this.state.data.id;
+        this.props.navigation.navigate('Web', { url: url });
+        this.close();
+    }
+
+    clickToShare = (type) => {
+        console.log('XXXXXXXXXXXXX', urlConfig.thumbImage);
+        this.close();
+        WeChat.isWXAppInstalled().then((isInstalled) => {
+            if (isInstalled) {
+                if (type === 'Session') {
+                    WeChat.shareToSession({
+                        imageUrl: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=请在下方输入框输入内容&pic=http://img.youai123.com/1507674241-4384.gif&width=300&height=300&x=53.5&y=270',
+                        // imageUrl: this.state.data && this.state.data.nurl,
+                        titlepicUrl: this.state.data && this.state.data.titlepic,
+                        type: 'imageUrl',
+                        webpageUrl: urlConfig.TouxiangDetailUrl + this.state.data.classid + '/' + this.state.data.id
+                    }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((e) => {
+                        if (error.message != -2) {
+                            Toast.show(error.message);
+                        }
+                    });
+                } else {
+                    WeChat.shareToTimeline({
+                        imageUrl: this.state.data && this.state.data.nurl,
+                        type: 'imageUrl',
+                        webpageUrl: urlConfig.TouxiangDetailUrl + this.state.data.classid + '/' + this.state.data.id
+                    }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
+                        if (error.message != -2) {
+                            Toast.show(error.message);
+                        }
+                    });
+                }
+            } else {
+            }
+        });
+    }
+    show = (item) => {
+        this.state.data = item;
+        if (Platform.OS === 'android') {
+            this.share()
+            return;
+        }
+        this._ViewHeight.setValue(0);
+        this.setState({
+            visible: true
+        }, Animated.timing(this._ViewHeight, {
+            fromValue: 0,
+            toValue: 140, // 目标值
+            duration: 200, // 动画时间
+            easing: Easing.linear // 缓动函数
+        }).start());
+    };
+    close = () => {
+        this.setState({
+            visible: false
+        });
+    };
+    share = async () => {
+        let data = await NativeModules.NativeUtil.showDialog();
+        if (data.wechat === 3) {
+            this.clickToReport();
+            return;
+        }
+        if (data) {
+            WeChat.isWXAppInstalled().then((isInstalled) => {
+                if (isInstalled) {
+                    if (data.wechat === 1) {
+                        WeChat.shareToSession({
+                            imageUrl: this.state.data && this.state.data.nurl,
+                            titlepicUrl: this.state.data && this.state.data.titlepic,
+                            type: 'imageUrl',
+                            webpageUrl: urlConfig.TouxiangDetailUrl + this.state.data.classid + '/' + this.state.data.id
+                        }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
+                            if (error.message != -2) {
+                                Toast.show(error.message);
+                            }
+                        });
+                    } else if (data.wechat === 2) {
+                        WeChat.shareToSession({
+                            imageUrl: this.state.data && this.state.data.nurl,
+                            titlepicUrl: this.state.data && this.state.data.titlepic,
+                            type: 'imageUrl',
+                            webpageUrl: urlConfig.TouxiangDetailUrl + this.state.data.classid + '/' + this.state.data.id
+                        }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
+                            if (error.message != -2) {
+                                Toast.show(error.message);
+                            }
+                        });
+                    }
+                } else {
+                    Toast.show("没有安装微信软件，请您安装微信之后再试");
+                }
+            });
+            console.log('data', data)
+        }
+    };
+
+    //保存图片
+    saveImg(img) {
+        var promise = CameraRoll.saveToCameraRoll(img);
+        promise.then(function (result) {
+            Toast.show('保存成功,请到相册查看。', {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
+        }).catch(function (error) {
+            Toast.show('保存失败！\n' + error, {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
+        });
+    }
+
     componentWillMount() {
+        console.log('this.state.datavthis.state.datathis.state.datathis.state.data', this.state.data);
         this._ViewHeight = new Animated.Value(0);
         
     }
@@ -96,7 +224,7 @@ export default class Me extends Component {
                 this.getImagesSize();
             }
         );
-        console.log('http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + ' + &width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y);
+        console.log('1111111==http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y);
     }
 
     getImagesSize = () =>{
@@ -201,13 +329,45 @@ export default class Me extends Component {
         return (
             <View style={{ flex: 1, backgroundColor: Color.f5f5f5 }}>
                 <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} />
+                <ScrollView>
                 <View style={{alignItems:'center'}}>
                     <Image source={{
-                        uri: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + ' + &width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y
+                        uri: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y
                     }}
                         style={{ width: this.props.navigation.state.params.width, height: this.props.navigation.state.params.height }}
                     />
                 </View>
+                 <View style={{ paddingTop: 30,flexDirection:'row', alignItems: 'center',justifyContent:'center' }}>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'row', marginLeft: 10 }}
+                            onPress={() => this.clickToShare('Session')}
+                        >
+                            <View style={styles.shareContent}>
+                                <Icon name="weixin" size={40} color='#f60' />
+                                <Text style={styles.spinnerTitle}>微信好友</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={this.saveImg.bind(this, this.state.data.nurl)}
+                            hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
+                            style={{ flexDirection: 'row', marginLeft: 10 }}
+                        >
+                            <View style={styles.shareContent}>
+                                <MaterialIcons name="add-to-photos" size={40} color='#fa7b3d' />
+                                <Text style={styles.spinnerTitle}>保存到相册</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'row', marginLeft: 10 }}
+                            onPress={() => this.clickToReport()}
+                        >
+                            <View style={styles.shareContent}>
+                                <IconSimple name="exclamation" size={40} color='#fe96aa' />
+                                <Text style={styles.spinnerTitle}>举报</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
                 <PureModalUtil
                     visible={this.state.visible}
                     close={this.close}
