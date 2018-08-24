@@ -60,7 +60,7 @@ export default class Me extends Component {
                             <IconSimple name="arrow-left" size={25} color='#282828' />
                         </View>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>生成表情</Text>
+                    <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>生成的表情,快去分享吧</Text>
                     <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7 }}></View>
                 </ImageBackground>
             )
@@ -96,8 +96,7 @@ export default class Me extends Component {
             if (isInstalled) {
                 if (type === 'Session') {
                     WeChat.shareToSession({
-                        imageUrl: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=请在下方输入框输入内容&pic=http://img.youai123.com/1507674241-4384.gif&width=300&height=300&x=53.5&y=270',
-                        // imageUrl: this.state.data && this.state.data.nurl,
+                        imageUrl: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + encodeURI(this.props.navigation.state.params.title) + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y + '&fontSize=' + this.props.navigation.state.params.fontSize + '&color=' + this.props.navigation.state.params.color,
                         titlepicUrl: this.state.data && this.state.data.titlepic,
                         type: 'imageUrl',
                         webpageUrl: urlConfig.TouxiangDetailUrl + this.state.data.classid + '/' + this.state.data.id
@@ -207,7 +206,6 @@ export default class Me extends Component {
     }
 
     componentWillMount() {
-        console.log('this.state.datavthis.state.datathis.state.datathis.state.data', this.state.data);
         this._ViewHeight = new Animated.Value(0);
         
     }
@@ -224,7 +222,7 @@ export default class Me extends Component {
                 this.getImagesSize();
             }
         );
-        console.log('1111111==http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y);
+        console.log('1111111==http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y + '&fontSize=' + this.props.navigation.state.params.fontSize) + '&color=' + this.props.navigation.state.params.color;
     }
 
     getImagesSize = () =>{
@@ -332,7 +330,7 @@ export default class Me extends Component {
                 <ScrollView>
                 <View style={{alignItems:'center'}}>
                     <Image source={{
-                        uri: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y
+                            uri: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y + '&fontSize=' + this.props.navigation.state.params.fontSize + '&color=' + this.props.navigation.state.params.color
                     }}
                         style={{ width: this.props.navigation.state.params.width, height: this.props.navigation.state.params.height }}
                     />
@@ -348,7 +346,8 @@ export default class Me extends Component {
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={this.saveImg.bind(this, this.state.data.nurl)}
+                            onPress={
+                                this.saveImg.bind(this, 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y + '&fontSize=' + this.props.navigation.state.params.fontSize + '&color=' + this.props.navigation.state.params.color)}
                             hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
                             style={{ flexDirection: 'row', marginLeft: 10 }}
                         >

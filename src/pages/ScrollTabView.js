@@ -28,6 +28,7 @@ import {
     TouchableWithoutFeedback,
     RefreshControl,
     DeviceEventEmitter,
+    Alert,
     LayoutAnimation,
     NativeModules,
     ImageBackground,
@@ -139,6 +140,9 @@ export  default  class ScrollTabView extends Component {
 
     }
     componentDidMount() {
+        if (Platform.OS === 'ios') {
+            this.commitTips();
+        }
         this.InitJPush();
         this.readUserCache();
         if (Platform.OS === 'android'){
@@ -334,7 +338,35 @@ export  default  class ScrollTabView extends Component {
             }
         }catch (err){}
     }
-
+    commitTips = async () => {
+        let url = urlConfig.CheckCommitTips;
+        let res = await HttpUtil.GET(url);
+        console.log('CheckCommitTipsCheckCommitTipsCheckCommitTips', res);
+        if (!res || !res.result) {
+            return;
+        }
+        let result = res.result ? res.result : [];
+        console.log('ress============ssss===', result[0].showFlag);
+        if (result[0].showFlag) {
+            Alert.alert('tips',
+                result[1].info,
+                [
+                    {
+                        text: '稍后提醒',
+                        // onPress: () => ToastAndroid.show('wait', ToastAndroid.SHORT)
+                    },
+                    {
+                        text: '马上去',
+                        onPress: () =>
+                            Linking.openURL(result[1].url)
+                                .catch((err) => {
+                                    console.log('An error occurred', err);
+                                })
+                    },
+                ]
+            )
+        }
+    }
     loadData = async()=>{
     let url = urlConfig.sectionList;
     console.log('sectionList',url);

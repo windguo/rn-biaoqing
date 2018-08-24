@@ -51,6 +51,7 @@ export default urlConfig = {
     sectionListTouxiangClass: '/e/api/biaoqing?getJson=touxiangClass',
     sectionListDataTouxiang: '/e/api/biaoqing?getJson=touxiangColumn',
 
+    CheckCommitTips: '/e/api/biaoqing/?getJson=commitTips'
 
 }
 

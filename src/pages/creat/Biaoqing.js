@@ -71,20 +71,13 @@ export default class Me extends Component {
                     </TouchableOpacity>
                     <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>
                         {navigation.state.routes[navigation.state.index].params && navigation.state.routes[navigation.state.index].params.title.substring(0,10)}...
-                        </Text>
-                    <TouchableOpacity
-                        style={{ flexDirection: 'row', marginLeft: 10 }}
-                        onPress={() => navigation.navigate('Web', { url: urlConfig.ReportURL + '/183/' + navigation.state.params.id })}
-                    >
-                        <View style={styles.shareContent}>
-                            <IconSimple name="exclamation" size={30} color='#fe96aa' />
-                            <Text style={styles.spinnerTitle}>举报</Text>
-                        </View>
-                    </TouchableOpacity>
+                    </Text>
+                    <View>
+                        <Text></Text>
+                    </View>
                 </ImageBackground>
             )
-        },
-        header:null
+        }
     };
     constructor(props) {
         super(props);
@@ -95,8 +88,8 @@ export default class Me extends Component {
             username: '',
             userpwd: '',
             userName: null,
-            top: parseInt(this.props.navigation.state.params.y),
-            left: parseInt(this.props.navigation.state.params.x),
+            top: parseInt(this.props.navigation.state.params.y) == '0' ? 50 : parseInt(this.props.navigation.state.params.y),
+            left: parseInt(this.props.navigation.state.params.x) == '0' ? 50 : parseInt(this.props.navigation.state.params.x),
             bg:'',
             trueWidth: 150,
             trueHeight: 150,
@@ -106,7 +99,8 @@ export default class Me extends Component {
             width: 100,
             height:100,
             keyBoardIsShow:false,
-            text_comments:''
+            text_comments:'',
+            color:'000000'
         };
     }
     lostBlur() {
@@ -156,6 +150,7 @@ export default class Me extends Component {
         })
     }
     componentWillUnmount() {
+        
         this.subscription.remove();
         this.keyboardDidShowListener.remove();
         this.keyboardDidHideListener.remove(); 
@@ -301,46 +296,28 @@ export default class Me extends Component {
             text_comments: event.nativeEvent.text,
         });
     }
+
+    _onLayout = (event) => {
+        let { x, y, width, height } = event.nativeEvent.layout;
+        console.log('width1111=====', width);
+        if (width <= this.state.trueWidth) {
+            console.log('width1111', width);
+            console.log('this.state.trueWidththis.state.trueWidththis.state.trueWidth', this.state.trueWidth);
+            console.log('<<<<<')
+        } else {
+            alert(1111)
+        }
+    }
+
     onContentSizeChange(event) {
         this.setState({
             height_comments: event.nativeEvent.contentSize.height,
         });
     }
-    _onLayout = (event) => {
-        let { x, y, width, height } = event.nativeEvent.layout;
-        console.log('width1111=====', width);
-        if (width <= this.state.trueWidth){
-            console.log('width1111',width);
-            console.log('this.state.trueWidththis.state.trueWidththis.state.trueWidth', this.state.trueWidth);
-            console.log('<<<<<')
-        }else{
-            alert(1111)
-        }
-    }
     render() {
         return (
             <KeyboardAvoidingView behavior='position' >
-                <ImageBackground style={{ ...header }}>
-                    <TouchableOpacity activeOpacity={1} onPress={() => {
-                        this.props.navigation.goBack(null);
-                    }}>
-                        <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
-                            <IconSimple name="arrow-left" size={25} color='#282828' />
-                        </View>
-                    </TouchableOpacity>
-                    <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>
-                        {this.props.navigation.state.params.title.substring(0,10)}
-                    </Text>
-                    <TouchableOpacity
-                        style={{ flexDirection: 'row' }}
-                        onPress={() => this.props.navigation.navigate('Web', { url: urlConfig.ReportURL + '/' + this.props.navigation.state.params.classid+'/' + this.props.navigation.state.params.id })}
-                    >
-                        <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7, width: 25 }}>
-                            <IconSimple name="exclamation" size={25} color='#fe96aa' />
-                        </View>
-                    </TouchableOpacity>
-                </ImageBackground>
-                <ScrollView scrollEnabled={false}>
+                <ScrollView bounces={false}>
                 <View style={styles.outerContainer}>
                     <View style={styles.container}>
                         <View style={{ alignItems: 'center', marginBottom: 10,paddingTop:15,paddingBottom:10,backgroundColor:'#f5f5f5',flex:1 }}>
@@ -355,6 +332,28 @@ export default class Me extends Component {
                                 }}
                                 indicator={ProgressBar}
                                 style={{ width: this.state.trueWidth, height: this.state.trueHeight }} />
+                            <View style={{flexDirection:'row',paddingTop:15}}>
+                                    <View><Text>颜色：</Text></View>
+                                    <Text style={[styles.colorSelect, { backgroundColor: 'red' }]} onPress={() => { this.setState({ color: 'ff0000' }) }}></Text>
+                                    <Text style={[styles.colorSelect, { backgroundColor: 'blue' }]} onPress={() => { this.setState({ color: '0000ff' }) }}></Text>
+                                    <Text style={[styles.colorSelect, { backgroundColor: 'yellow' }]} onPress={() => { this.setState({ color: 'ffff00' }) }}></Text>
+                                    <Text style={[styles.colorSelect, { backgroundColor: 'pink' }]} onPress={() => { this.setState({ color: 'ffc0cb' }) }}></Text>
+                                    <Text style={[styles.colorSelect, { backgroundColor: 'black' }]} onPress={() => { this.setState({ color: '000000' }) }}></Text>
+                                    <Text style={[styles.colorSelect, { backgroundColor: 'green' }]} onPress={() => { this.setState({ color: '00ff00' }) }}></Text>
+                                    <Text style={[styles.colorSelect, { backgroundColor: 'white' }]} onPress={() => { this.setState({ color: 'ffffff' }) }}></Text>
+                                    <Text style={[styles.colorSelect, { backgroundColor: 'orange' }]} onPress={() => { this.setState({ color: 'ff6600' }) }}></Text>
+                            </View>
+                                <View style={{ flexDirection: 'row', paddingTop: 15 }}>
+                                    <View><Text>字号：</Text></View>
+                                    <Text style={styles.fontSelect} onPress={() => { this.setState({ fontSize: 14 }) }}>14</Text>
+                                    <Text style={styles.fontSelect} onPress={() => { this.setState({ fontSize: 18 }) }}>18</Text>
+                                    <Text style={styles.fontSelect} onPress={() => { this.setState({ fontSize: 20 }) }}>20</Text>
+                                    <Text style={styles.fontSelect} onPress={() => { this.setState({ fontSize: 22 }) }}>22</Text>
+                                    <Text style={styles.fontSelect} onPress={() => { this.setState({ fontSize: 24 }) }}>24</Text>
+                                    <Text style={styles.fontSelect} onPress={() => { this.setState({ fontSize: 26 }) }}>26</Text>
+                                    <Text style={styles.fontSelect} onPress={() => { this.setState({ fontSize: 28 }) }}>28</Text>
+                                    <Text style={styles.fontSelect} onPress={() => { this.setState({ fontSize: 30 }) }}>30</Text>
+                                </View>
                             <TextInput
                                 style={styles.textInputStyle}
                                 clearTextOnFocus={true}
@@ -375,7 +374,8 @@ export default class Me extends Component {
                                     title: this.state.text,
                                     nurl: this.state.data.nurl,
                                     x: this.state.left - (screenWidth - this.state.trueWidth) / 2,
-                                    y: this.state.top + 10,
+                                    y: this.state.top,
+                                    color: this.state.color,
                                     fontSize: this.state.fontSize,
                                     width: this.state.trueWidth,
                                     height: this.state.trueHeight,
@@ -392,13 +392,14 @@ export default class Me extends Component {
                                     position: 'absolute',
                                     top: this.state.top,
                                     left: this.state.left,
-                                    borderWidth: 1,
+                                    borderWidth: StyleSheet.hairlineWidth,
+                                    borderColor:'black',
+                                    padding:4,
                                     borderStyle: 'dashed',
-                                    padding: 4
                                 }]}>
                                     <Text
                                         onLayout={this._onLayout}
-                                        style={{ fontSize: 14,textAlign:'center',maxWidth:this.state.trueWidth-20 }}>{this.state.text}</Text>
+                                        style={{ fontSize: this.state.fontSize,color:'#' + this.state.color,textAlign:'center',maxWidth:this.state.trueWidth-20 }}>{this.state.text}</Text>
                             </View>
                             
                         </View>
@@ -493,4 +494,10 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40
     },
+    colorSelect:{
+        width: 30, height: 20, borderWidth: StyleSheet.hairlineWidth, borderColor: '#ccc',
+    },
+    fontSelect:{
+        width: 30,  borderWidth: StyleSheet.hairlineWidth, borderColor: '#ccc',backgroundColor:'#fff',textAlign:'center'
+    }
 });
