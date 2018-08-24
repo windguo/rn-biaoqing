@@ -93,7 +93,7 @@ export default class Me extends Component {
             bg:'',
             trueWidth: 150,
             trueHeight: 150,
-            text: '请在下方输入框输入内容',
+            text: '给你个好东西',
             // text: this.props.navigation.state.params.title,
             fontSize:14,
             width: 100,
