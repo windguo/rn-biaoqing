@@ -82,7 +82,7 @@ const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
     ScrollTabViewRand: { screen: ScrollTabViewRand },
     LocalBiaoqingCollection: { screen: LocalBiaoqingCollection },
-    SearchTag: { screen: SearchTag },
+    // SearchTag: { screen: SearchTag },
     My:{screen: My},
 },{
     lazy: true,

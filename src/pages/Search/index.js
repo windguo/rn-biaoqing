@@ -55,6 +55,13 @@ export default class SearchTag extends Component {
             let textinput;
             return (
                 <ImageBackground style={{ ...header }}>
+                    <TouchableOpacity activeOpacity={1} onPress={() => {
+                        navigation.goBack(null);
+                    }}>
+                        <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
+                            <IconSimple name="arrow-left" size={25} color='#282828' />
+                        </View>
+                    </TouchableOpacity>
                     <View style={{
                         flexDirection: 'row',
                         justifyContent: 'center', 
@@ -78,7 +85,7 @@ export default class SearchTag extends Component {
                                 color: '#555555',
                                 borderRadius: 10,
                                 marginHorizontal: 20, 
-                                width: WIDTH - 120,
+                                width: WIDTH - 140,
                                 height: 32,
                                 paddingHorizontal: 20,
                                 paddingTop:0,
@@ -136,6 +143,7 @@ export default class SearchTag extends Component {
     }
 
     loadinit = async()=>{
+        console.log(1234);
         let  url =  urlConfig.Search + "keyword";
         let res = await HttpUtil.GET(url);
         if(!res||!res.result){
@@ -151,7 +159,7 @@ export default class SearchTag extends Component {
 
     //点击搜索
     searchKey = (keyword)=>{
-        // console.log("navigation",this.props.navigation);
+        console.log("navigationnavigationnavigationnavigation===",this.props.navigation);
         this.props.navigation.setParams({ key: keyword,changetext:keyword });
         this.props.navigation.navigate("Search",{key:keyword});
     }

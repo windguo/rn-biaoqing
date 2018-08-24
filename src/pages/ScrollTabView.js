@@ -57,7 +57,7 @@ import HttpUtil from  '../utils/HttpUtil';
 const NativeVersion = DeviceInfo.getVersion();
 export  default  class ScrollTabView extends Component {
     static navigationOptions = {
-        tabBarLabel: '最新',
+        tabBarLabel: '最新表情',
         tabBarIcon: ({tintColor,focused}) => (
             <IconSimple name="fire" size={22} color={focused ? "#f60":'black'} />
         ),
@@ -405,7 +405,7 @@ export  default  class ScrollTabView extends Component {
                 }
             })
 
-            return <ScrollableTabBar activeTextColor='#f60' underlineStyle={{ height: 0, width: 0 }} style={{ marginLeft: 10, marginRight: 10 }}
+            return <ScrollableTabBar activeTextColor='#f60' underlineStyle={{ height: 0, width: 0 }} style={{ marginLeft: 10, marginRight: 45 }}
                                      backgroundColor='white' textStyle={{fontSize: 16, fontWeight:'100'}}
                                      tabStyle={{paddingLeft: 10, paddingRight: 10}} />;
         }
@@ -543,7 +543,15 @@ export  default  class ScrollTabView extends Component {
             }
             return (
                 <View style={styles.wrap}>
-                    {/*  */}
+                    <View style={styles.cRightEditIcon}>
+                        <TouchableOpacity activeOpacity={0.6} onPress={() => {
+                            this.props.navigation.navigate('SearchTag')
+                        }}>
+                            <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7 }}>
+                                <MaterialIcons name="search" size={25} color='#666' />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                     <ScrollableTabView renderTabBar={this.renderTabBar} page={this.state.page}>
                         {this.renderContent(this.state.sectionList)}
                     </ScrollableTabView>
@@ -624,7 +632,17 @@ const styles = StyleSheet.create({
         justifyContent:'space-between',
         borderRadius:10
     },
-
+    cRightEditIcon: {
+        position: 'absolute',
+        zIndex: 10,
+        right: 15,
+        ...ifIphoneX({
+            top: 48
+        }, {
+                top: Platform.OS === "ios" ? 24 : SCALE(StatusBarHeight())
+            }),
+        // top: 3,
+    },
 
 });
 
