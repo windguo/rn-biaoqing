@@ -55,7 +55,7 @@ export default class Me extends Component {
             (this.props.defaultValue === nextProps.defaultValue && (nextProps.value == undefined || nextProps.value == ''));
     }
     static navigationOptions = {
-        tabBarLabel: 'DIY表情',
+        tabBarLabel: '表情生成',
         tabBarIcon: ({ tintColor, focused }) => (
             <IconSimple name="user" size={22} color={focused ? "#f60" : 'black'} />
         ),
@@ -70,7 +70,7 @@ export default class Me extends Component {
                         </View>
                     </TouchableOpacity>
                     <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>
-                        {navigation.state.routes[navigation.state.index].params && navigation.state.routes[navigation.state.index].params.title.substring(0,10)}...
+                        {navigation.state.routes[navigation.state.index].params && navigation.state.routes[navigation.state.index].params.title.substring(0,14)}...
                     </Text>
                     <View>
                         <Text></Text>

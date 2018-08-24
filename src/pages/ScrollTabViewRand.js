@@ -56,7 +56,7 @@ import HttpUtil from '../utils/HttpUtil';
 const NativeVersion = DeviceInfo.getVersion();
 export default class ScrollTabView extends Component {
     static navigationOptions = {
-        tabBarLabel: 'DIY表情',
+        tabBarLabel: '表情生成',
         tabBarIcon: ({ tintColor, focused }) => (
             <IconSimple name="fire" size={22} color={focused ? "#f60" : 'black'} />
         ),
@@ -70,7 +70,7 @@ export default class ScrollTabView extends Component {
                             
                         </View>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>DIY表情模板</Text>
+                    <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>表情模板</Text>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
                         navigation.state.routes[0].routes[0].params.rightFuc && navigation.state.routes[0].routes[0].params.rightFuc();
                     }}>
