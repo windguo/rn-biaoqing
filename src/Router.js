@@ -22,7 +22,13 @@ import ScrollTabViewRand from './pages/ScrollTabViewRand';
 import ScrollTabViewBiaoqingbao from './pages/ScrollTabViewBiaoqingbao';
 import ScrollTabViewTouxiang from './pages/ScrollTabViewTouxiang';
 import TouxiangDetail from './pages/TouxiangDetail';
+import creatBiaoqingPhoto from './pages/creat/creatBiaoqingPhoto';
+import creatBiaoqingPhotoMake from './pages/creat/creatBiaoqingPhotoMake';
+import creatBiaoqingPhotoResult from './pages/creat/creatBiaoqingPhotoResult';
+import creatBiaoqingIndex from './pages/creat/creatBiaoqingIndex';
 import creatBiaoqing from './pages/creat/Biaoqing';
+import localPublish from './pages/creat/localPublish';
+import localPublishMake from './pages/creat/localPublishMake';
 import creatBiaoqingResult from './pages/creat/Result';
 import Tab from './components/Tab'
 import Login from  './pages/Login'
@@ -80,7 +86,7 @@ const _configureTransition = () => {
 }
 const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
-    ScrollTabViewRand: { screen: ScrollTabViewRand },
+    creatBiaoqingIndex: { screen: creatBiaoqingIndex },
     LocalBiaoqingCollection: { screen: LocalBiaoqingCollection },
     // SearchTag: { screen: SearchTag },
     My:{screen: My},
@@ -99,7 +105,14 @@ const NavgationApp = StackNavigator({
     Index: {screen: TabNavigaApp},
     Detail: {screen: Detail},
     Web: {screen: web},
+    creatBiaoqingPhoto: { screen: creatBiaoqingPhoto },
+    creatBiaoqingPhotoMake: { screen: creatBiaoqingPhotoMake },
+    creatBiaoqingPhotoResult: { screen: creatBiaoqingPhotoResult },
+    localPublish: { screen: localPublish },
+    localPublishMake: { screen: localPublishMake },
+    ScrollTabViewRand: { screen: ScrollTabViewRand },
     Touxiang: { screen: ScrollTabViewTouxiang },
+    creatBiaoqingIndex: {screen: creatBiaoqingIndex},
     Login: {screen: Login},
     creatBiaoqing: {screen: creatBiaoqing},
     creatBiaoqingResult: {screen: creatBiaoqingResult},

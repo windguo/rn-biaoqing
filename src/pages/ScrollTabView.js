@@ -545,7 +545,8 @@ export  default  class ScrollTabView extends Component {
                 <View style={styles.wrap}>
                     <View style={styles.cRightEditIcon}>
                         <TouchableOpacity activeOpacity={0.6} onPress={() => {
-                            this.props.navigation.navigate('SearchTag')
+                            // this.props.navigation.navigate('SearchTag')
+                            this.props.navigation.navigate('localPublish')
                         }}>
                             <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7 }}>
                                 <MaterialIcons name="search" size={25} color='#666' />

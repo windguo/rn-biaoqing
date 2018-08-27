@@ -64,10 +64,10 @@ export default class ScrollTabView extends Component {
             return (
                 <ImageBackground style={{ ...header }}>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
-                        navigation.state.routes[0].routes[0].params.leftFuc && navigation.state.routes[0].routes[0].params.leftFuc();
+                        navigation.goBack(null);
                     }}>
                         <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
-                            
+                            <IconSimple name="arrow-left" size={25} color='#282828' />
                         </View>
                     </TouchableOpacity>
                     <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>表情模板</Text>

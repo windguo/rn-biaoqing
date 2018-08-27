@@ -159,6 +159,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-image-picker')
     compile'com.android.support:multidex:1.0.0'
     compile project(':react-native-device-info')
     compile project(':jcore-react-native')
