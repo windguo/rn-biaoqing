@@ -156,7 +156,7 @@ export default class HttpRequest {
     }
 
     static async POST(url, params,type) {
-        url = url.indexOf("http://m.jianjie8.com")>=0?url:HttpRequest.baseUrl()+url;
+        // url = url.indexOf("http://m.jianjie8.com")>=0?url:HttpRequest.baseUrl()+url;
         // url = HttpRequest.baseUrl()+url;
        let res = _fetch(fetch(url,{
                 method: 'POST',

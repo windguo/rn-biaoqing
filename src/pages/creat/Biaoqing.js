@@ -305,7 +305,6 @@ export default class Me extends Component {
             console.log('this.state.trueWidththis.state.trueWidththis.state.trueWidth', this.state.trueWidth);
             console.log('<<<<<')
         } else {
-            alert(1111)
         }
     }
 
