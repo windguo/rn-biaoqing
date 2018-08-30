@@ -43,23 +43,25 @@ import ProgressBar from 'react-native-progress/Bar';
 let screenWidth = Dimensions.get('window').width;
 let screenHeight = Dimensions.get('window').height;
 
+import ImagePicker from 'react-native-image-picker';
+
 export default class Me extends Component {
     static navigationOptions = {
         tabBarLabel: 'DIY表情',
         tabBarIcon: ({ tintColor, focused }) => (
-            <IconSimple name="user" size={22} color={focused ? "#f60" : 'black'} />
+            <MaterialIcons name="child-care" size={25} color={focused ? "#f60" : 'black'} />
         ),
         header: ({ navigation }) => {
             return (
                 <ImageBackground style={{ ...header }}>
                     <TouchableOpacity activeOpacity={1} onPress={() => {
-                        navigation.goBack(null);
+                        navigation.navigate(null);
                     }}>
                         <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7, width: 20 }}>
-                            <IconSimple name="arrow-left" size={25} color='#282828' />
+                            {/* <IconSimple name="arrow-left" size={25} color='#282828' /> */}
                         </View>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>DIY表情首页</Text>
+                    <Text style={{ fontSize: 16, textAlign: 'center',fontWeight:'300', lineHeight: 43.7, color: '#282828' }}>DIY表情-展示独特的自己</Text>
                     <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7 }}></View>
                 </ImageBackground>
             )
@@ -68,18 +70,109 @@ export default class Me extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            
+            avatarSource: null,
+            base64Data: '',
+            width: 100,
+            height: 100,
+            top: 0,
+            left: 0,
+            fontSize: 14,
+            type: '',
+            color: '000000',
+            uri: '',
+            response: ''
 
         };
 
 
     }
+
+    selectPhotoTapped() {
+        const options = {
+            title:'',
+            takePhotoButtonTitle:null,
+            chooseFromLibraryButtonTitle:'从相册选择',
+            maxWidth:300,
+            maxHeight:300,
+            cancelButtonTitle:'取消',
+            quality: 1.0,
+            storageOptions: {
+                skipBackup: true
+            }
+        };
+
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response-1-1-1-1-1-1-1 = ', response);
+            if (!response.data) return false;
+            // let responseData = response.data.replace(/\+/g, '-').replace(/\//g, '_');
+            let responseData = response.data;
+            var str = response.uri;
+            var index = str.lastIndexOf("\.");
+            str = str.substring(index + 1, str.length);
+            this.setState({
+                width: response.width,
+                height: response.height,
+                uri: response.uri,
+                response: response,
+                type: str,
+                base64Data: 'data:image/' + str + ';base64,' + responseData,
+            });
+
+
+            // console.log('this.state.base6===' + this.state.base64Data);
+
+            if (response.didCancel) {
+                console.log('User cancelled photo picker');
+            }
+            else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            }
+            else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            }
+            else {
+                let source = { uri: response.uri };
+
+                // You can also display the image using data:
+                // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({
+                    avatarSource: source
+                });
+            }
+        });
+    }
+
+
+    PostThumb = async (item, dotop, index) => {
+        let formData = new FormData();
+        console.log('formDataformDataformDataformData=', formData);
+        formData.append("pic", this.state.base64Data);
+        formData.append("x", this.state.left - (screenWidth - this.state.width) / 2);
+        formData.append("y", this.state.top);
+        formData.append("color", this.state.color);
+        formData.append("fontSize", this.state.fontSize);
+        formData.append("width", this.state.width);
+        formData.append("height", this.state.height);
+        formData.append("type", this.state.type);
+        console.log(formData);
+        let url = 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat';
+        let res = await HttpUtil.POST(url, formData);
+        console.log('resresresresresres=====', res);
+    }
     componentWillMount() {
-        
+        this.viewDidAppear = this.props.navigation.addListener(
+            'didFocus',
+            (obj) => {
+                this.setState({
+                    avatarSource:null
+                })
+            }
+        );
     }
 
     componentWillUnmount() {
-        this.subscription.remove();
+        
     }
     componentDidMount() {
         
@@ -165,33 +258,48 @@ export default class Me extends Component {
         return (
             <View>
                 <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} />
-                <TouchableOpacity activeOpacity={1} onPress={() => { this.props.navigation.navigate('ScrollTabViewRand') }}>
+                <TouchableOpacity activeOpacity={0.6} onPress={() => { this.props.navigation.navigate('ScrollTabViewRand') }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, backgroundColor: 'white', justifyContent: 'space-between' }}>
                         <View style={{ marginLeft: 20, flexDirection: 'row', alignItems: 'center' }}>
-                            <IconSimple name="question" size={22} color={Color.FontColor} />
-                            <Text style={{ marginLeft: 10 }}>表情生成广场</Text>
+                            <IconSimple name="globe-alt" size={22} color={Color.FontColor} />
+                            <Text style={{ marginLeft: 10 }}>表情模版生成</Text>
                         </View>
                         <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{ marginRight: 20 }} />
                     </View>
                 </TouchableOpacity>
                 <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} />
-                <TouchableOpacity activeOpacity={1} onPress={() => { this.props.navigation.navigate('creatBiaoqingPhoto') }}>
+                <TouchableOpacity activeOpacity={0.6} onPress={() => { this.props.navigation.navigate('OnlyTextCreat') }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, backgroundColor: 'white', justifyContent: 'space-between' }}>
                         <View style={{ marginLeft: 20, flexDirection: 'row', alignItems: 'center' }}>
-                            <IconSimple name="question" size={22} color={Color.FontColor} />
-                            <Text style={{ marginLeft: 10 }}>拍照</Text>
+                            <MaterialIcons name="text-fields" size={22} color={Color.FontColor} />
+                            <Text style={{ marginLeft: 10 }}>纯文字表情生成</Text>
                         </View>
                         <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{ marginRight: 20 }} />
                     </View>
                 </TouchableOpacity>
                 <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} />
-                <TouchableOpacity activeOpacity={1} onPress={() => { this.props.navigation.navigate('localPublish') }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, backgroundColor: 'white', justifyContent: 'space-between' }}>
-                        <View style={{ marginLeft: 20, flexDirection: 'row', alignItems: 'center' }}>
-                            <IconSimple name="question" size={22} color={Color.FontColor} />
-                            <Text style={{ marginLeft: 10 }}>选择照片</Text>
-                        </View>
-                        <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{ marginRight: 20 }} />
+                <TouchableOpacity activeOpacity={0.6} onPress={this.selectPhotoTapped.bind(this)}>
+                    <View style={[styles.avatar, styles.avatarContainer, { marginBottom: 20 }]}>
+                        {this.state.avatarSource === null ? 
+                        <View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, backgroundColor: 'white', justifyContent: 'space-between' }}>
+                                    <View style={{ marginLeft: 20, flexDirection: 'row', alignItems: 'center' }}>
+                                        <IconSimple name="cloud-upload" size={22} color={Color.FontColor} />
+                                        <Text style={{ marginLeft: 10 }}>本地图片生成</Text>
+                                    </View>
+                                    <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{ marginRight: 20 }} />
+                                </View>
+                        </View> :
+                            this.props.navigation.navigate('localPublishMake', {
+                                x: 0,
+                                y: 0,
+                                nurl: this.state.uri,
+                                width: this.state.width,
+                                height: this.state.height,
+                                base64Data: this.state.base64Data,
+                                response: this.state.response
+                            })
+                        }
                     </View>
                 </TouchableOpacity>
             </View>

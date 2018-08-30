@@ -398,7 +398,7 @@ export default class Me extends Component {
                                 }]}>
                                     <Text
                                         onLayout={this._onLayout}
-                                        style={{ fontSize: this.state.fontSize,color:'#' + this.state.color,textAlign:'center',maxWidth:this.state.trueWidth-20 }}>{this.state.text}</Text>
+                                        style={{ fontSize: this.state.fontSize,color:'#' + this.state.color,maxWidth:this.state.trueWidth-20 }}>{this.state.text}</Text>
                             </View>
                             
                         </View>

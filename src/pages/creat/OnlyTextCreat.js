@@ -42,6 +42,8 @@ import storageKeys from '../../utils/storageKeyValue'
 import ScrollTabView from "../ScrollTabView";
 import ImageProgress from 'react-native-image-progress';
 import ProgressBar from 'react-native-progress/Bar';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Toast from 'react-native-root-toast';
 let screenWidth = Dimensions.get('window').width;
 let screenHeight = Dimensions.get('window').height;
 
@@ -55,7 +57,7 @@ export default class Me extends Component {
             (this.props.defaultValue === nextProps.defaultValue && (nextProps.value == undefined || nextProps.value == ''));
     }
     static navigationOptions = {
-        tabBarLabel: '表情生成',
+        tabBarLabel: '',
         tabBarIcon: ({ tintColor, focused }) => (
             <IconSimple name="user" size={22} color={focused ? "#f60" : 'black'} />
         ),
@@ -70,7 +72,7 @@ export default class Me extends Component {
                         </View>
                     </TouchableOpacity>
                     <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>
-                        {navigation.state.routes[navigation.state.index].params && navigation.state.routes[navigation.state.index].params.title.substring(0,14)}...
+                        纯文字表情生成
                     </Text>
                     <View>
                         <Text></Text>
@@ -88,19 +90,22 @@ export default class Me extends Component {
             username: '',
             userpwd: '',
             userName: null,
-            top: parseInt(this.props.navigation.state.params.y) == '0' ? 50 : parseInt(this.props.navigation.state.params.y),
-            left: parseInt(this.props.navigation.state.params.x) == '0' ? 50 : parseInt(this.props.navigation.state.params.x),
+            top: 100,
+            left: 40,
             bg:'',
             trueWidth: 150,
             trueHeight: 150,
             text: '请在下方输入框输入内容',
-            // text: this.props.navigation.state.params.title,
             fontSize:14,
-            width: 100,
-            height:100,
+            width: 300,
+            height:300,
             keyBoardIsShow:false,
+            hasResult:false,
+            creatButtonFlag:false,
             text_comments:'',
-            color:'000000'
+            color:'000000',
+            type:'png',
+            nurl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyhpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MzQyMDFERkRBNDI3MTFFODlGRUNEN0NEMDZERDZBRTEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MzQyMDFERkVBNDI3MTFFODlGRUNEN0NEMDZERDZBRTEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozNDIwMURGQkE0MjcxMUU4OUZFQ0Q3Q0QwNkRENkFFMSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozNDIwMURGQ0E0MjcxMUU4OUZFQ0Q3Q0QwNkRENkFFMSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsQbyC4AAAAGUExURf///wAAAFXC034AAABwSURBVHja7MEBAQAAAIIg/69uSEABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwbgIMAGDLAAE4lnoUAAAAAElFTkSuQmCC'
         };
     }
     lostBlur() {
@@ -150,8 +155,6 @@ export default class Me extends Component {
         })
     }
     componentWillUnmount() {
-        
-        this.subscription.remove();
         this.keyboardDidShowListener.remove();
         this.keyboardDidHideListener.remove(); 
         this._panResponder = PanResponder.create({
@@ -179,31 +182,7 @@ export default class Me extends Component {
         })
     }
     componentDidMount() {
-        this.loadContentData();
-        this.subscription = DeviceEventEmitter.addListener('LoginSuccess', this.LoginSuccess);
-        setTimeout(() => { GLOBAL.userInfo && this.setState({ username: GLOBAL.userInfo.username }) }, 500);
-        this.viewDidAppear = this.props.navigation.addListener(
-            'didFocus',
-            (obj) => {
-                this.getImagesSize();
-            }
-        );
-    }
-
-    getImagesSize = () =>{
-        Image.getSize(this.state.data.nurl, (width, height) => {
-            //width 图片的宽度 Math.floor向下取整
-            //height 图片的高度
-            let proportion = screenWidth;
-            let myHeight = Math.floor(screenWidth / width * height);
-            console.log('screenWidthscreenWidthscreenWidthscreenWidthscreenWidth', screenWidth);
-            console.log('trueWidthtrueWidthtrueWidth', width);
-            console.log('7=====', width > screenWidth ? screenWidth : width);
-            this.setState({ width: proportion, height: myHeight, trueWidth: width > screenWidth ? screenWidth : width, trueHeight: height });
-        })
-    }
-    LoginSuccess = () => {
-        this.setState({ username: GLOBAL.userInfo.username });
+        
     }
     pushToWeb = (params) => {
         let url = '';
@@ -259,7 +238,44 @@ export default class Me extends Component {
             </TouchableWithoutFeedback>
         );
     };
-    show = () => {
+
+    clickToShare = (type) => {
+        console.log('XXXXXXXXXXXXX', urlConfig.thumbImage);
+        this.close();
+        WeChat.isWXAppInstalled().then((isInstalled) => {
+            if (isInstalled) {
+                if (type === 'Session') {
+                    WeChat.shareToSession({
+                        imageUrl: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic,
+                        titlepicUrl: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic,
+                        type: 'imageUrl',
+                        webpageUrl: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic
+                    }).then((message) => { console.log('messagemessage', message); message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
+                        if (error.message != -2) {
+                            Toast.show(error.message);
+                        }
+                    });
+                } else {
+                    WeChat.shareToTimeline({
+                        imageUrl: this.state.data && this.state.data.nurl,
+                        type: 'imageUrl',
+                        webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
+                    }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
+                        if (error.message != -2) {
+                            Toast.show(error.message);
+                        }
+                    });
+                }
+            } else {
+            }
+        });
+    }
+    show = (item) => {
+        this.state.data = item;
+        if (Platform.OS === 'android') {
+            this.share()
+            return;
+        }
         this._ViewHeight.setValue(0);
         this.setState({
             visible: true
@@ -275,20 +291,35 @@ export default class Me extends Component {
             visible: false
         });
     };
-    loadContentData = async (resolve) => {
-        let url = urlConfig.DetailUrl + '&id=' + this.props.navigation.state.params.id;
-        console.log('loadUrlloadUrlloadUrlloadUrlloadUrl', url);
-        let res = await HttpUtil.GET(url);
-        console.log(res);
-        resolve && resolve();
-        if (this.props.index !== 0) { this.isNotfirstFetch = true };
-        let result = res.result ? res.result : [];
-        console.log('result===', result);
-        this.setState({
-            data: result,
+
+    //保存图片
+    saveImg = (img) => {
+        var promise = CameraRoll.saveToCameraRoll(img);
+        promise.then(function (result) {
+            Toast.show('保存成功,请到相册查看。', {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
+        }).catch(function (error) {
+            Toast.show('保存失败！\n' + error, {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
         });
-        console.log('res', res);
-    };
+    }
+    clickToReport = () => {
+        let url = urlConfig.ReportURL + '/' + this.state.data.classid + '/' + this.state.data.id;
+        this.props.navigation.navigate('Web', { url: url });
+        this.close();
+    }
 
     //关键代码
      _onChange(event) {
@@ -305,7 +336,6 @@ export default class Me extends Component {
             console.log('this.state.trueWidththis.state.trueWidththis.state.trueWidth', this.state.trueWidth);
             console.log('<<<<<')
         } else {
-            alert(1111)
         }
     }
 
@@ -314,24 +344,53 @@ export default class Me extends Component {
             height_comments: event.nativeEvent.contentSize.height,
         });
     }
-    render() {
+
+    PostThumb = async (item, dotop, index) => {
+        this.setState({
+            creatButtonFlag: true
+        })
+        let formData = new FormData();
+        console.log('formDataformDataformDataformData=', formData);
+        formData.append("name", this.state.text);
+        formData.append("pic", this.state.nurl);
+        // formData.append("x",0);
+        formData.append("x", this.state.left - (screenWidth - this.state.width) / 2) - 10;
+        // formData.append("y",0);
+        formData.append("y", this.state.top + 12);
+        formData.append("color", this.state.color);
+        formData.append("fontSize", this.state.fontSize - 4);
+        formData.append("width", this.state.width);
+        formData.append("height", this.state.height);
+        formData.append("type", this.state.type);
+        console.log(formData);
+        let url = 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat';
+        console.log('url---=---=---', url);
+        let res = await HttpUtil.POST(url, formData);
+        console.log('resresresresresres=====', res);
+        this.setState({
+            hasResult: true,
+            localCreatedPic: res.result[0].picpath,
+            creatButtonFlag: true
+        });
+    }
+
+    renderUnCreat() {
         return (
             <KeyboardAvoidingView behavior='position' >
                 <ScrollView bounces={false}>
                 <View style={styles.outerContainer}>
                     <View style={styles.container}>
                         <View style={{ alignItems: 'center', marginBottom: 10,paddingTop:15,paddingBottom:10,backgroundColor:'#f5f5f5',flex:1 }}>
-                            <ImageProgress
-                                    source={{ uri: this.props.navigation.state.params.nurl }}
-                                resizeMode={'cover'}
-                                indicatorProps={{
-                                    size: 30,
-                                    borderWidth: 1,
-                                    color: 'rgba(255, 160, 0, 0.8)',
-                                    unfilledColor: 'rgba(200, 200, 200, 0.1)'
+                            <Image
+                                style={{
+                                    width: this.state.width,
+                                    height: this.state.height,
+                                    resizeMode: "cover"
                                 }}
-                                indicator={ProgressBar}
-                                    style={{ width: this.props.navigation.state.params.width, height: this.props.navigation.state.params.height }} />
+                                source={{
+                                    uri:this.state.nurl
+                                }}
+                            />
                             <View style={{flexDirection:'row',paddingTop:15}}>
                                     <View><Text>颜色：</Text></View>
                                     <Text style={[styles.colorSelect, { backgroundColor: 'red' }]} onPress={() => { this.setState({ color: 'ff0000' }) }}></Text>
@@ -368,24 +427,22 @@ export default class Me extends Component {
                                 onContentSizeChange={this.onContentSizeChange.bind(this)}
                                 {...this.props}
                             ></TextInput>
-                            <TouchableOpacity style={{ alignItems: 'center', marginTop: 20 }} activeOpacity={0.8} onPress={() => {
-                                this.props.navigation.navigate('creatBiaoqingPhotoResult', {
-                                    id: this.state.data.id,
-                                    title: this.state.text,
-                                    nurl: this.props.navigation.state.params.nurl,
-                                    x: this.state.left - (screenWidth - this.state.trueWidth) / 2,
-                                    y: this.state.top,
-                                    color: this.state.color,
-                                    fontSize: this.state.fontSize,
-                                    width: this.props.navigation.state.params.width,
-                                    height: height,
-                                    classid: this.state.data.classid
-                                });
-                            }}>
-                                <View style={{ width: '90%', paddingTop:10,paddingLeft:30,paddingRight:30,height:40, backgroundColor: '#f60', borderRadius: 8 }}>
-                                    <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16 }}>立即生成表情</Text>
-                                </View>
-                            </TouchableOpacity>
+                            {this.state.creatButtonFlag ?
+                                <TouchableOpacity style={{ alignItems: 'center', marginTop: 20 }} activeOpacity={0.8} onPress={() => {
+                                    // this.PostThumb();
+                                }}>
+                                    <View style={{ width: '90%', paddingTop: 10, paddingLeft: 30, paddingRight: 30, height: 40, backgroundColor: '#ccc', borderRadius: 8 }}>
+                                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16 }}>正在努力生成</Text>
+                                    </View>
+                                </TouchableOpacity> :
+                                <TouchableOpacity style={{ alignItems: 'center', marginTop: 20 }} activeOpacity={0.8} onPress={() => {
+                                    this.PostThumb();
+                                }}>
+                                    <View style={{ width: '90%', paddingTop: 10, paddingLeft: 30, paddingRight: 30, height: 40, backgroundColor: '#f60', borderRadius: 8 }}>
+                                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16 }}>立即生成表情</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            }
                             <View
                                 {...this._panResponder.panHandlers}
                                 style={[styles.rect, {
@@ -399,7 +456,7 @@ export default class Me extends Component {
                                 }]}>
                                     <Text
                                         onLayout={this._onLayout}
-                                        style={{ fontSize: this.state.fontSize,color:'#' + this.state.color,textAlign:'center',maxWidth:this.state.trueWidth-20 }}>{this.state.text}</Text>
+                                        style={{ fontSize: this.state.fontSize,color:'#' + this.state.color,maxWidth:this.state.width }}>{this.state.text}</Text>
                             </View>
                             
                         </View>
@@ -411,6 +468,61 @@ export default class Me extends Component {
                 </View>
                 </ScrollView>
             </KeyboardAvoidingView>
+        );
+    }
+    renderCreated = () => {
+        return (
+            <ScrollView>
+                <View style={styles.outerContainer}>
+                    <View style={styles.container}>
+                        <View style={{ alignItems: 'center', marginBottom: 10, paddingTop: 15,backgroundColor:'#f5f5f5' }}>
+                            <Image
+                                source={{ uri: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic }}
+                                style={{ width: this.state.width, height: this.state.height }}
+                            />
+                        </View>
+                        <View style={{ paddingTop: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                            <TouchableOpacity
+                                style={{ flexDirection: 'row', marginLeft: 10 }}
+                                onPress={() => this.clickToShare('Session')}
+                            >
+                                <View style={styles.shareContent}>
+                                    <Icon name="weixin" size={40} color='#f60' />
+                                    <Text style={styles.spinnerTitle}>微信好友</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={
+                                    this.saveImg.bind(this, 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic)}
+                                hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
+                                style={{ flexDirection: 'row', marginLeft: 10 }}
+                            >
+                                <View style={styles.shareContent}>
+                                    <MaterialIcons name="add-to-photos" size={40} color='#fa7b3d' />
+                                    <Text style={styles.spinnerTitle}>保存到相册</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ flexDirection: 'row', marginLeft: 10 }}
+                                onPress={() => this.clickToReport()}
+                            >
+                                <View style={styles.shareContent}>
+                                    <IconSimple name="exclamation" size={40} color='#fe96aa' />
+                                    <Text style={styles.spinnerTitle}>举报</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </ScrollView>
+        )
+    }
+
+    render = () => {
+        return (
+            <View>
+                {this.state.hasResult ? this.renderCreated() : this.renderUnCreat()}
+            </View>
         );
     }
 

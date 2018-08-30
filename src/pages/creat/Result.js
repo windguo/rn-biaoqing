@@ -79,6 +79,7 @@ export default class Me extends Component {
             left: 20,
             width: 100,
             height:100,
+            _picpath:'',
             
         };
     }
@@ -88,7 +89,17 @@ export default class Me extends Component {
         this.props.navigation.navigate('Web', { url: url });
         this.close();
     }
-
+    ToastShow = (message) => {
+        Toast.show(message, {
+            duration: Toast.durations.SHORT,
+            position: Toast.positions.CENTER,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+        });
+    }
+    
     clickToShare = (type) => {
         console.log('XXXXXXXXXXXXX', urlConfig.thumbImage);
         this.close();
@@ -96,11 +107,11 @@ export default class Me extends Component {
             if (isInstalled) {
                 if (type === 'Session') {
                     WeChat.shareToSession({
-                        imageUrl: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + encodeURI(this.props.navigation.state.params.title) + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y + '&fontSize=' + this.props.navigation.state.params.fontSize + '&color=' + this.props.navigation.state.params.color,
-                        titlepicUrl: this.state.data && this.state.data.titlepic,
+                        imageUrl: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state._picpath,
+                        titlepicUrl: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state._picpath,
                         type: 'imageUrl',
-                        webpageUrl: urlConfig.TouxiangDetailUrl + this.state.data.classid + '/' + this.state.data.id
-                    }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((e) => {
+                        webpageUrl: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state._picpath
+                    }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
                         if (error.message != -2) {
                             Toast.show(error.message);
                         }
@@ -210,30 +221,10 @@ export default class Me extends Component {
         
     }
     componentWillUnmount() {
-        this.subscription.remove();
+        
     }
     componentDidMount() {
         this.loadContentData();
-        this.subscription = DeviceEventEmitter.addListener('LoginSuccess', this.LoginSuccess);
-        setTimeout(() => { GLOBAL.userInfo && this.setState({ username: GLOBAL.userInfo.username }) }, 500);
-        this.viewDidAppear = this.props.navigation.addListener(
-            'didFocus',
-            (obj) => {
-                this.getImagesSize();
-            }
-        );
-        console.log('1111111==http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y + '&fontSize=' + this.props.navigation.state.params.fontSize) + '&color=' + this.props.navigation.state.params.color;
-    }
-
-    getImagesSize = () =>{
-        Image.getSize(this.state.data.nurl, (width, height) => {
-            //width 图片的宽度 Math.floor向下取整
-            //height 图片的高度
-            let proportion = screenWidth;
-            let myHeight = Math.floor(screenWidth / width * height);
-            
-            this.setState({ width: proportion, height: myHeight });
-        })
     }
     LoginSuccess = () => {
         this.setState({ username: GLOBAL.userInfo.username });
@@ -309,18 +300,31 @@ export default class Me extends Component {
         });
     };
     loadContentData = async (resolve) => {
-        let url = urlConfig.DetailUrl + '&id=' + this.props.navigation.state.params.id;
-        console.log('loadUrlloadUrlloadUrlloadUrlloadUrl', url);
-        let res = await HttpUtil.GET(url);
-        console.log(res);
-        resolve && resolve();
-        if (this.props.index !== 0) { this.isNotfirstFetch = true };
+        let formData = new FormData();
+        console.log('formDataformDataformDataformData=', formData);
+        formData.append("name", this.props.navigation.state.params.title);
+        formData.append("pic", this.props.navigation.state.params.nurl);
+        // formData.append("x",0);
+        formData.append("x", this.props.navigation.state.params.x);
+        // formData.append("y",0);
+        formData.append("y", this.props.navigation.state.params.y);
+        formData.append("color", this.props.navigation.state.params.color);
+        formData.append("fontSize", this.props.navigation.state.params.fontSize - 4);
+        formData.append("width", this.props.navigation.state.params.width);
+        formData.append("height", this.props.navigation.state.params.height);
+        formData.append("type", this.props.navigation.state.params.type);
+        console.log(formData);
+        let url = 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat';
+        console.log('url---=---=---', url);
+        let res = await HttpUtil.POST(url, formData);
+        console.log('resresresresresres=====', res);
         let result = res.result ? res.result : [];
-        console.log('result===', result);
         this.setState({
             data: result,
+            _picpath: result[0].picpath
         });
-        console.log('res', res);
+
+        console.log('=======', 'http://www.jianjie8.com/e/api/biaoqing/' + this.state._picpath)
     };
 
     render() {
@@ -330,7 +334,7 @@ export default class Me extends Component {
                 <ScrollView>
                 <View style={{alignItems:'center'}}>
                     <Image source={{
-                            uri: 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y + '&fontSize=' + this.props.navigation.state.params.fontSize + '&color=' + this.props.navigation.state.params.color
+                            uri: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state._picpath
                     }}
                         style={{ width: this.props.navigation.state.params.width, height: this.props.navigation.state.params.height }}
                     />
@@ -347,7 +351,7 @@ export default class Me extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={
-                                this.saveImg.bind(this, 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat&showpic=1&name=' + this.props.navigation.state.params.title + '&pic=' + this.props.navigation.state.params.nurl + '&width=' + this.props.navigation.state.params.width + '&height=' + this.props.navigation.state.params.height + '&x=' + this.props.navigation.state.params.x + '&y=' + this.props.navigation.state.params.y + '&fontSize=' + this.props.navigation.state.params.fontSize + '&color=' + this.props.navigation.state.params.color)}
+                                this.saveImg.bind(this, 'http://www.jianjie8.com/e/api/biaoqing/' + this.state._picpath)}
                             hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
                             style={{ flexDirection: 'row', marginLeft: 10 }}
                         >

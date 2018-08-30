@@ -20,6 +20,7 @@ import {
     RefreshControl,
     DeviceEventEmitter,
     LayoutAnimation,
+    CameraRoll,
     NativeModules,
     ImageBackground,
     Keyboard,
@@ -44,12 +45,13 @@ import ImageProgress from 'react-native-image-progress';
 import ProgressBar from 'react-native-progress/Bar';
 let screenWidth = Dimensions.get('window').width;
 let screenHeight = Dimensions.get('window').height;
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Toast from 'react-native-root-toast';
 
 const { width, height } = Dimensions.get('window');
 
 export default class Me extends Component {
     shouldComponentUpdate(nextProps) {
-
         return Platform.OS !== 'ios' || (this.props.value === nextProps.value &&
             (nextProps.defaultValue == undefined || nextProps.defaultValue == '')) ||
             (this.props.defaultValue === nextProps.defaultValue && (nextProps.value == undefined || nextProps.value == ''));
@@ -70,7 +72,7 @@ export default class Me extends Component {
                         </View>
                     </TouchableOpacity>
                     <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>
-                        sdfgbsd
+                        本地图片生成表情
                     </Text>
                     <View>
                         <Text></Text>
@@ -87,7 +89,6 @@ export default class Me extends Component {
             ViewHeight: new Animated.Value(0),
             username: '',
             userpwd: '',
-            base64Data: '',
             userName: null,
             top: parseInt(this.props.navigation.state.params.y) == '0' ? 50 : parseInt(this.props.navigation.state.params.y),
             left: parseInt(this.props.navigation.state.params.x) == '0' ? 50 : parseInt(this.props.navigation.state.params.x),
@@ -97,32 +98,37 @@ export default class Me extends Component {
             text: '请在下方输入框输入内容',
             // text: this.props.navigation.state.params.title,
             fontSize: 14,
-            width: 100,
-            height: 100,
+            width: this.props.navigation.state.params.width,
+            height: this.props.navigation.state.params.height,
             keyBoardIsShow: false,
+            hasResult: false,
+            creatButtonFlag: false,
             type: '',
+            base64Data: '',
+            response: '',
+            localCreatedPic: '',
             color: '000000',
         };
     }
-    lostBlur() {
+    lostBlur=()=> {
         //退出软件盘
         if (keyBoardIsShow) {
             Keyboard.dismiss();
         }
     }
-    _keyboardDidShow() {
+    _keyboardDidShow=()=> {
         // this.setState({
         //     keyBoardIsShow:true
         // })
     }
 
-    _keyboardDidHide() {
+    _keyboardDidHide=()=> {
         // this.setState({
         //     keyBoardIsShow: false
         // })
     }
 
-    componentWillMount() {
+    componentWillMount = () => {
         this._ViewHeight = new Animated.Value(0);
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
@@ -150,9 +156,7 @@ export default class Me extends Component {
             }
         })
     }
-    componentWillUnmount() {
-
-        this.subscription.remove();
+    componentWillUnmount=()=> {
         this.keyboardDidShowListener.remove();
         this.keyboardDidHideListener.remove();
         this._panResponder = PanResponder.create({
@@ -179,99 +183,23 @@ export default class Me extends Component {
             }
         })
     }
-    componentDidMount() {
+    componentDidMount=()=> {
+        console.log('base64Database64Database64Data==', this.state.base64Data);
+        let responseData = this.props.navigation.state.params.response.data.replace(/\+/g, '-').replace(/\//g, '_');
+        var str = this.props.navigation.state.params.response.uri;
+        var index = str.lastIndexOf("\.");
+        str = str.substring(index + 1, str.length);
+        this.setState({
+            type: str,
+            base64Data: 'data:image/' + str + ';base64,' + responseData,
+        },() =>{
+            // console.log('base64Database64Database64Data==', this.state.base64Data);
+        });
         
     }
-    LoginSuccess = () => {
-        this.setState({ username: GLOBAL.userInfo.username });
-    }
-    pushToWeb = (params) => {
-        let url = '';
-        if (params === 'yjfk') {
-            url = urlConfig.suggestURL;
-        } else if (params === 'yhsyxy') {
-            url = urlConfig.agreementURL;
-        }
-        this.props.navigation.navigate('Web', { url: url });
-    }
-    renderSpinner = (text) => {
-        return (
-            <TouchableWithoutFeedback
-                onPress={() => { this.setState({ visible: false }); }}>
-                <View key="spinner" style={styles.spinner}>
-                    <Animated.View style={{
-                        justifyContent: 'center',
-                        width: WIDTH,
-                        height: this._ViewHeight,
-                        backgroundColor: '#fcfcfc',
-                        position: 'absolute',
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        overflow: 'hidden'
-                    }}>
-                        <View style={styles.shareParent}>
-                            <TouchableOpacity
-                                style={styles.base}
-                                onPress={() => this.clickToShare('Session')}
-                            >
-                                <View style={styles.shareContent}>
-                                    <Image style={styles.shareIcon} source={require('../../assets/share_icon_wechat.png')} />
-                                    <Text style={styles.spinnerTitle}>微信好友</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.base}
-                                onPress={() => this.clickToShare('TimeLine')}
-                            >
-                                <View style={styles.shareContent}>
-                                    <Image style={styles.shareIcon} source={require('../../assets/share_icon_moments.png')} />
-                                    <Text style={styles.spinnerTitle}>微信朋友圈</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{ height: 10, backgroundColor: '#f5f5f5' }}></View>
-                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                            <Text style={{ fontSize: 16, color: 'black', textAlign: 'center' }}>取消</Text>
-                        </View>
-                    </Animated.View>
-                </View>
-            </TouchableWithoutFeedback>
-        );
-    };
-    show = () => {
-        this._ViewHeight.setValue(0);
-        this.setState({
-            visible: true
-        }, Animated.timing(this._ViewHeight, {
-            fromValue: 0,
-            toValue: 140, // 目标值
-            duration: 200, // 动画时间
-            easing: Easing.linear // 缓动函数
-        }).start());
-    };
-    close = () => {
-        this.setState({
-            visible: false
-        });
-    };
-    loadContentData = async (resolve) => {
-        let url = urlConfig.DetailUrl + '&id=' + this.props.navigation.state.params.id;
-        console.log('loadUrlloadUrlloadUrlloadUrlloadUrl', url);
-        let res = await HttpUtil.GET(url);
-        console.log(res);
-        resolve && resolve();
-        if (this.props.index !== 0) { this.isNotfirstFetch = true };
-        let result = res.result ? res.result : [];
-        console.log('result===', result);
-        this.setState({
-            data: result,
-        });
-        console.log('res', res);
-    };
 
     //关键代码
-         _onChange(event) {
+    _onChange = (event) => {
         this.setState({
             text_comments: event.nativeEvent.text,
         });
@@ -288,79 +216,133 @@ export default class Me extends Component {
         }
     }
 
-    onContentSizeChange(event) {
+    onContentSizeChange = (event) => {
         this.setState({
             height_comments: event.nativeEvent.contentSize.height,
         });
     }
-    selectPhotoTapped() {
-        const options = {
-            quality: 1.0,
-            maxWidth: 500,
-            maxHeight: 500,
-            storageOptions: {
-                skipBackup: true
-            }
-        };
 
-        ImagePicker.showImagePicker(options, (response) => {
-            console.log('Response = ', response);
-            if (!response.data) return false;
-            let responseData = response.data.replace(/\+/g, '-').replace(/\//g, '_');
-            var str = response.uri;
-            var index = str.lastIndexOf("\.");
-            str = str.substring(index + 1, str.length);
-            this.setState({
-                width: response.width,
-                height: response.height,
-                uri: response.uri,
-                type: str,
-                base64Data: 'data:image/' + str + ';base64,' + responseData,
-            });
-
-
-            // console.log('this.state.base6===' + this.state.base64Data);
-
-            if (response.didCancel) {
-                console.log('User cancelled photo picker');
-            }
-            else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            }
-            else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-            }
-            else {
-                let source = { uri: response.uri };
-
-                // You can also display the image using data:
-                // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-                this.setState({
-                    avatarSource: source
-                });
-            }
+    ToastShow = (message) => {
+        Toast.show(message, {
+            duration: Toast.durations.SHORT,
+            position: Toast.positions.CENTER,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
         });
     }
+    
     PostThumb = async (item, dotop, index) => {
+        this.setState({
+            creatButtonFlag:true
+        })
         let formData = new FormData();
         console.log('formDataformDataformDataformData=', formData);
+        formData.append("name", this.state.text);
         formData.append("pic", this.state.base64Data);
-        formData.append("x", this.state.left - (screenWidth - this.state.width) / 2);
-        formData.append("y", this.state.top);
+        // formData.append("x",0);
+        formData.append("x", this.state.left - (screenWidth - this.state.width) / 2)-10;
+        // formData.append("y",0);
+        formData.append("y", this.state.top+12);
         formData.append("color", this.state.color);
-        formData.append("fontSize", this.state.fontSize);
+        formData.append("fontSize", this.state.fontSize-4);
         formData.append("width", this.state.width);
         formData.append("height", this.state.height);
         formData.append("type", this.state.type);
         console.log(formData);
         let url = 'http://www.jianjie8.com/e/api/biaoqing/?getJson=creat';
+        console.log('url---=---=---',url);
         let res = await HttpUtil.POST(url, formData);
         console.log('resresresresresres=====', res);
+        this.setState({
+            hasResult:true,
+            localCreatedPic:res.result[0].picpath,
+            creatButtonFlag:false
+        });
     }
+    clickToShare = (type) => {
+        console.log('XXXXXXXXXXXXX', urlConfig.thumbImage);
+        this.close();
+        WeChat.isWXAppInstalled().then((isInstalled) => {
+            if (isInstalled) {
+                if (type === 'Session') {
+                    WeChat.shareToSession({
+                        imageUrl: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic,
+                        titlepicUrl: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic,
+                        type: 'imageUrl',
+                        webpageUrl: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic
+                    }).then((message) => { console.log('messagemessage', message);message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
+                        if (error.message != -2) {
+                            Toast.show(error.message);
+                        }
+                    });
+                } else {
+                    WeChat.shareToTimeline({
+                        imageUrl: this.state.data && this.state.data.nurl,
+                        type: 'imageUrl',
+                        webpageUrl: urlConfig.DetailUrl + this.state.data.classid + '/' + this.state.data.id
+                    }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
+                        if (error.message != -2) {
+                            Toast.show(error.message);
+                        }
+                    });
+                }
+            } else {
+            }
+        });
+    }
+    show = (item) => {
+        this.state.data = item;
+        if (Platform.OS === 'android') {
+            this.share()
+            return;
+        }
+        this._ViewHeight.setValue(0);
+        this.setState({
+            visible: true
+        }, Animated.timing(this._ViewHeight, {
+            fromValue: 0,
+            toValue: 140, // 目标值
+            duration: 200, // 动画时间
+            easing: Easing.linear // 缓动函数
+        }).start());
+    };
+    close = () => {
+        this.setState({
+            visible: false
+        });
+    };
 
-
-    render() {
+    //保存图片
+    saveImg=(img)=> {
+        var promise = CameraRoll.saveToCameraRoll(img);
+        promise.then(function (result) {
+            Toast.show('保存成功,请到相册查看。', {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
+        }).catch(function (error) {
+            Toast.show('保存失败！\n' + error, {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+            });
+        });
+    }
+    clickToReport = () => {
+        let url = urlConfig.ReportURL + '/' + this.state.data.classid + '/' + this.state.data.id;
+        this.props.navigation.navigate('Web', { url: url });
+        this.close();
+    }
+    renderUnCreat = () => {
         return (
             <KeyboardAvoidingView behavior='position' >
                 <ScrollView bounces={false}>
@@ -368,8 +350,8 @@ export default class Me extends Component {
                         <View style={styles.container}>
                             <View style={{ alignItems: 'center', marginBottom: 10, paddingTop: 15, paddingBottom: 10, backgroundColor: '#f5f5f5', flex: 1 }}>
                                 <ImageProgress
-                                    source={{ uri: this.props.navigation.state.params.nurl }}
-                                    resizeMode={'cover'}
+                                    source={{ uri: this.props.navigation.state.params.base64Data }}
+                                    resizeMode={'contain'}
                                     indicatorProps={{
                                         size: 30,
                                         borderWidth: 1,
@@ -377,7 +359,7 @@ export default class Me extends Component {
                                         unfilledColor: 'rgba(200, 200, 200, 0.1)'
                                     }}
                                     indicator={ProgressBar}
-                                    style={{ width: this.state.trueWidth, height: this.state.trueHeight }} />
+                                    style={{ width: this.props.navigation.state.params.response.width, height: this.props.navigation.state.params.response.height }} />
                                 <View style={{ flexDirection: 'row', paddingTop: 15 }}>
                                     <View><Text>颜色：</Text></View>
                                     <Text style={[styles.colorSelect, { backgroundColor: 'red' }]} onPress={() => { this.setState({ color: 'ff0000' }) }}></Text>
@@ -414,13 +396,23 @@ export default class Me extends Component {
                                     onContentSizeChange={this.onContentSizeChange.bind(this)}
                                     {...this.props}
                                 ></TextInput>
-                                <TouchableOpacity style={{ alignItems: 'center', marginTop: 20 }} activeOpacity={0.8} onPress={() => {
-                                    this.PostThumb();
-                                }}>
-                                    <View style={{ width: '90%', paddingTop: 10, paddingLeft: 30, paddingRight: 30, height: 40, backgroundColor: '#f60', borderRadius: 8 }}>
-                                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16 }}>立即生成表情</Text>
-                                    </View>
-                                </TouchableOpacity>
+                                {this.state.creatButtonFlag ?
+                                    <TouchableOpacity style={{ alignItems: 'center', marginTop: 20 }} activeOpacity={0.8} onPress={() => {
+                                        // this.PostThumb();
+                                    }}>
+                                        <View style={{ width: '90%', paddingTop: 10, paddingLeft: 30, paddingRight: 30, height: 40, backgroundColor: '#ccc', borderRadius: 8 }}>
+                                            <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16 }}>正在努力生成</Text>
+                                        </View>
+                                    </TouchableOpacity> :
+                                    <TouchableOpacity style={{ alignItems: 'center', marginTop: 20 }} activeOpacity={0.8} onPress={() => {
+                                        this.PostThumb();
+                                    }}>
+                                        <View style={{ width: '90%', paddingTop: 10, paddingLeft: 30, paddingRight: 30, height: 40, backgroundColor: '#f60', borderRadius: 8 }}>
+                                            <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16 }}>立即生成表情</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                }
+                                
                                 <View
                                     {...this._panResponder.panHandlers}
                                     style={[styles.rect, {
@@ -434,18 +426,68 @@ export default class Me extends Component {
                                     }]}>
                                     <Text
                                         onLayout={this._onLayout}
-                                        style={{ fontSize: this.state.fontSize, color: '#' + this.state.color, textAlign: 'center', maxWidth: this.state.trueWidth - 20 }}>{this.state.text}</Text>
+                                        style={{ fontSize: this.state.fontSize, color: '#' + this.state.color, maxWidth: this.state.width }}>{this.state.text}</Text>
                                 </View>
 
                             </View>
-                            <PureModalUtil
-                                visible={this.state.visible}
-                                close={this.close}
-                                contentView={this.renderSpinner} />
                         </View>
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
+        )
+    }
+    renderCreated = () => {
+        return (
+            <ScrollView>
+                <View style={styles.outerContainer}>
+                    <View style={styles.container}>
+                        <View style={{ alignItems: 'center', marginBottom: 10, paddingTop: 15}}>
+                            <Image
+                                source={{ uri: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic }}
+                                style={{ width: this.state.width, height: this.state.height }}
+                            />
+                        </View>
+                        <View style={{ paddingTop: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                            <TouchableOpacity
+                                style={{ flexDirection: 'row', marginLeft: 10 }}
+                                onPress={() => this.clickToShare('Session')}
+                            >
+                                <View style={styles.shareContent}>
+                                    <Icon name="weixin" size={40} color='#f60' />
+                                    <Text style={styles.spinnerTitle}>微信好友</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={
+                                    this.saveImg.bind(this, 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic)}
+                                hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}
+                                style={{ flexDirection: 'row', marginLeft: 10 }}
+                            >
+                                <View style={styles.shareContent}>
+                                    <MaterialIcons name="add-to-photos" size={40} color='#fa7b3d' />
+                                    <Text style={styles.spinnerTitle}>保存到相册</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ flexDirection: 'row', marginLeft: 10 }}
+                                onPress={() => this.clickToReport()}
+                            >
+                                <View style={styles.shareContent}>
+                                    <IconSimple name="exclamation" size={40} color='#fe96aa' />
+                                    <Text style={styles.spinnerTitle}>举报</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </ScrollView>
+        )
+    }
+    render=()=> {
+        return (
+            <View>
+                {this.state.hasResult ? this.renderCreated() : this.renderUnCreat()}
+            </View>
         );
     }
 
