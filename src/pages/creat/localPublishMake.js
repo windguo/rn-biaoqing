@@ -345,7 +345,7 @@ export default class Me extends Component {
     renderUnCreat = () => {
         return (
             <KeyboardAvoidingView behavior='position' >
-                <ScrollView bounces={false}>
+                <ScrollView bounces={false} style={{backgroundColor:'#f5f5f5'}}>
                     <View style={styles.outerContainer}>
                         <View style={styles.container}>
                             <View style={{ alignItems: 'center', marginBottom: 10, paddingTop: 15, paddingBottom: 10, backgroundColor: '#f5f5f5', flex: 1 }}>
@@ -431,13 +431,14 @@ export default class Me extends Component {
                             </View>
                         </View>
                     </View>
+                    <View style={{ width: WIDTH, height: 50}} />
                 </ScrollView>
             </KeyboardAvoidingView>
         )
     }
     renderCreated = () => {
         return (
-            <ScrollView>
+            <ScrollView style={{ backgroundColor: '#f5f5f5' }}>
                 <View style={styles.outerContainer}>
                     <View style={styles.container}>
                         <View style={{ alignItems: 'center', marginBottom: 10, paddingTop: 15,backgroundColor:'#f5f5f5'}}>
@@ -479,6 +480,7 @@ export default class Me extends Component {
                         </View>
                     </View>
                 </View>
+                <View style={{ width: WIDTH, height: 50}} />
             </ScrollView>
         )
     }
