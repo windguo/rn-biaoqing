@@ -96,7 +96,7 @@ export default class Me extends Component {
             trueWidth: 150,
             trueHeight: 150,
             text: '请在下方输入框输入内容',
-            fontSize:14,
+            fontSize:16,
             width: 300,
             height:300,
             keyBoardIsShow:false,
@@ -417,9 +417,9 @@ export default class Me extends Component {
                                 style={styles.textInputStyle}
                                 clearTextOnFocus={true}
                                 defaultValue={this.state.text}
-                                placeholder='最多输入十八个字符,不区分中英文'
+                                placeholder='最多输入五十个字符,不区分中英文'
                                 clearButtonMode={'always'}
-                                maxLength={18}
+                                maxLength={50}
                                 returnKeyType={'done'}
                                 onChangeText={(text) => this.setState({ text })}
                                 onSubmitEditing={Keyboard.dismiss}
@@ -451,12 +451,11 @@ export default class Me extends Component {
                                     left: this.state.left,
                                     borderWidth: StyleSheet.hairlineWidth,
                                     borderColor:'black',
-                                    padding:4,
                                     borderStyle: 'dashed',
                                 }]}>
                                     <Text
                                         onLayout={this._onLayout}
-                                        style={{ fontSize: this.state.fontSize,color:'#' + this.state.color,maxWidth:this.state.width }}>{this.state.text}</Text>
+                                        style={{ fontSize: this.state.fontSize,color:'#' + this.state.color,maxWidth:this.state.width,lineHeight:45 }}>{this.state.text}</Text>
                             </View>
                             
                         </View>

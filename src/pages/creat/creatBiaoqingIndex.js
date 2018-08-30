@@ -61,7 +61,7 @@ export default class Me extends Component {
                             {/* <IconSimple name="arrow-left" size={25} color='#282828' /> */}
                         </View>
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 16, textAlign: 'center',fontWeight:'300', lineHeight: 43.7, color: '#282828' }}>DIY表情-展示独特的自己</Text>
+                    <Text style={{ fontSize: 16, textAlign: 'center', lineHeight: 43.7, color: '#282828' }}>DIY表情-展示独特的自己</Text>
                     <View style={{ justifyContent: 'center', marginRight: 10, alignItems: 'center', height: 43.7 }}></View>
                 </ImageBackground>
             )
