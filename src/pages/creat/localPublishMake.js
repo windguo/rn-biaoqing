@@ -440,7 +440,7 @@ export default class Me extends Component {
             <ScrollView>
                 <View style={styles.outerContainer}>
                     <View style={styles.container}>
-                        <View style={{ alignItems: 'center', marginBottom: 10, paddingTop: 15}}>
+                        <View style={{ alignItems: 'center', marginBottom: 10, paddingTop: 15,backgroundColor:'#f5f5f5'}}>
                             <Image
                                 source={{ uri: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic }}
                                 style={{ width: this.state.width, height: this.state.height }}
@@ -531,8 +531,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        flexDirection: 'column',
-        backgroundColor: '#FFF'
+        flexDirection: 'column'
     },
     spinner: {
         width: WIDTH,

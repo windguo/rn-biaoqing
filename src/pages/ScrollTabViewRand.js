@@ -372,8 +372,8 @@ export default class ScrollTabView extends Component {
             }
         })
 
-        return <ScrollableTabBar activeTextColor='#f60' underlineStyle={{ height: 0, width: 0 }} style={{ marginLeft: 10, marginRight: 10,height:0,backgroundColor:'red' }}
-            backgroundColor='white' textStyle={{ fontSize: 16, fontWeight: '100' }}
+        return <ScrollableTabBar activeTextColor='#f60' underlineStyle={{ height: 0, width: 0 }} style={{ paddingLeft: 10, paddingRight: 10,height:0,backgroundColor:'red' }}
+            backgroundColor='white' textStyle={{ fontSize: 16, fontWeight: '300' }}
             tabStyle={{ paddingLeft: 10, paddingRight: 10 }} />;
     }
     pageNumber = (number) => {

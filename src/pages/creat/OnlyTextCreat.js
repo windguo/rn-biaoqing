@@ -472,9 +472,10 @@ export default class Me extends Component {
     renderCreated = () => {
         return (
             <ScrollView>
-                <View style={styles.outerContainer}>
+                <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} />
+                <View>
                     <View style={styles.container}>
-                        <View style={{ alignItems: 'center', marginBottom: 10, paddingTop: 15,backgroundColor:'#f5f5f5' }}>
+                        <View style={{ alignItems: 'center', backgroundColor:'#fff' }}>
                             <Image
                                 source={{ uri: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic }}
                                 style={{ width: this.state.width, height: this.state.height }}
@@ -541,13 +542,10 @@ const header = {
 }
 const styles = StyleSheet.create({
     outerContainer: {
-        height: HEIGHT,
-        // flex:1,
-        // backgroundColor:'red'
+        height: HEIGHT
     },
     container: {
         flex: 1,
-        // backgroundColor:'red',
         justifyContent: 'center',
     },
     textInputStyle:{
@@ -563,11 +561,6 @@ const styles = StyleSheet.create({
     },
     base: {
         flex: 1
-    },
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: '#FFF'
     },
     spinner: {
         width: WIDTH,

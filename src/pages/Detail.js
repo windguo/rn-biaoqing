@@ -679,7 +679,7 @@ export default class ScrollTabView extends Component {
                         >
                             <View style={styles.shareContent}>
                                 <Icon name="weixin" size={30} color='#f60' />
-                                <Text style={styles.spinnerTitle}>分享给微信好友</Text>
+                                <Text style={styles.spinnerTitle}>分享到微信</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity

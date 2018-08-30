@@ -318,7 +318,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        paddingLeft:10,
+        paddingLeft:5,
+        paddingRight:5,
         paddingBottom:10
     },
     sectionChild:{
