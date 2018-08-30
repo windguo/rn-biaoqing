@@ -442,10 +442,17 @@ export default class Me extends Component {
                 <View style={styles.outerContainer}>
                     <View style={styles.container}>
                         <View style={{ alignItems: 'center', marginBottom: 10, paddingTop: 15,backgroundColor:'#f5f5f5'}}>
-                            <Image
+                            <ImageProgress
                                 source={{ uri: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic }}
-                                style={{ width: this.state.width, height: this.state.height }}
-                            />
+                                resizeMode={'contain'}
+                                indicatorProps={{
+                                    size: 30,
+                                    borderWidth: 1,
+                                    color: 'rgba(255, 160, 0, 0.8)',
+                                    unfilledColor: 'rgba(200, 200, 200, 0.1)'
+                                }}
+                                indicator={ProgressBar}
+                                style={{ width: this.props.navigation.state.params.response.width, height: this.props.navigation.state.params.response.height }} />
                         </View>
                         <View style={{ paddingTop: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <TouchableOpacity

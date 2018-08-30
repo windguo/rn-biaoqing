@@ -500,32 +500,22 @@ export default class ScrollTabView extends Component {
 
     }
     render() {
-        if (this.state.renderLoading) {
-            return this._renderLoading();
-        } else if (this.state.renderError) {
-            return this._renderError();
-        } else {
-            if (this.state.sectionList.length < 1) {
-                return this._renderError("暂无数据点击请求");
-            }
-            return (
-                <View style={styles.wrap}>
-                    {/*  */}
-                    <ScrollableTabView renderTabBar={this.renderTabBar} page={this.state.page}>
-                        {this.renderContent(this.state.sectionList)}
-                    </ScrollableTabView>
-                    <Modal
-                        animationType='fade'        // 淡入淡出
-                        transparent={true}              // 透明
-                        visible={this.state.showModal}    // 根据isModal决定是否显示
-                        onRequestClose={() => { this.onRequestClose() }}  // android必须实现
-                    >
-                        {this.renderModal()}
-                    </Modal>
-                </View>
+        return (
+            <View style={styles.wrap}>
+                <ScrollableTabView renderTabBar={this.renderTabBar} page={this.state.page}>
+                    {this.renderContent(this.state.sectionList)}
+                </ScrollableTabView>
+                <Modal
+                    animationType='fade'        // 淡入淡出
+                    transparent={true}              // 透明
+                    visible={this.state.showModal}    // 根据isModal决定是否显示
+                    onRequestClose={() => { this.onRequestClose() }}  // android必须实现
+                >
+                    {this.renderModal()}
+                </Modal>
+            </View>
 
-            );
-        }
+        );
     }
 
 }

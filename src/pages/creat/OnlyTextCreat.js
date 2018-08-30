@@ -377,7 +377,7 @@ export default class Me extends Component {
     renderUnCreat() {
         return (
             <KeyboardAvoidingView behavior='position' >
-                <ScrollView bounces={false}>
+                <ScrollView bounces={false} style={{ backgroundColor: Color.f5f5f5 }}>
                 <View style={styles.outerContainer}>
                     <View style={styles.container}>
                         <View style={{ alignItems: 'center', marginBottom: 10,paddingTop:15,paddingBottom:10,backgroundColor:'#f5f5f5',flex:1 }}>
@@ -471,15 +471,22 @@ export default class Me extends Component {
     }
     renderCreated = () => {
         return (
-            <ScrollView>
+            <ScrollView style={{ backgroundColor: Color.f5f5f5 }}>
                 <View style={{ width: WIDTH, height: 10, backgroundColor: Color.f5f5f5 }} />
                 <View>
                     <View style={styles.container}>
-                        <View style={{ alignItems: 'center', backgroundColor:'#fff' }}>
-                            <Image
+                        <View style={{ alignItems: 'center' }}>
+                            <ImageProgress
                                 source={{ uri: 'http://www.jianjie8.com/e/api/biaoqing/' + this.state.localCreatedPic }}
-                                style={{ width: this.state.width, height: this.state.height }}
-                            />
+                                resizeMode={'contain'}
+                                indicatorProps={{
+                                    size: 30,
+                                    borderWidth: 1,
+                                    color: 'rgba(255, 160, 0, 0.8)',
+                                    unfilledColor: 'rgba(200, 200, 200, 0.1)'
+                                }}
+                                indicator={ProgressBar}
+                                style={{ width: this.state.width, height: this.state.height }} />
                         </View>
                         <View style={{ paddingTop: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <TouchableOpacity
@@ -542,7 +549,7 @@ const header = {
 }
 const styles = StyleSheet.create({
     outerContainer: {
-        height: HEIGHT
+        height: HEIGHT,
     },
     container: {
         flex: 1,
