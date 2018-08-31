@@ -377,7 +377,7 @@ export default class Me extends Component {
     renderUnCreat() {
         return (
             <KeyboardAvoidingView behavior='position' >
-                <ScrollView bounces={false} style={{ backgroundColor: Color.f5f5f5 }}>
+                <ScrollView style={{ backgroundColor: Color.f5f5f5 }}>
                 <View style={styles.outerContainer}>
                     <View style={styles.container}>
                         <View style={{ alignItems: 'center', marginBottom: 10,paddingTop:15,paddingBottom:10,backgroundColor:'#f5f5f5',flex:1 }}>
