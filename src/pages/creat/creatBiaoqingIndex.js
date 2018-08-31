@@ -89,8 +89,8 @@ export default class Me extends Component {
 
     selectPhotoTapped() {
         const options = {
-            title:'',
-            takePhotoButtonTitle:null,
+            title:'请选择一个图片来源',
+            takePhotoButtonTitle:'拍个照片',
             chooseFromLibraryButtonTitle:'从相册选择',
             maxWidth:300,
             maxHeight:300,
@@ -100,7 +100,10 @@ export default class Me extends Component {
                 skipBackup: true
             }
         };
-
+        // ImagePicker.launchCamera(options, (response) => {
+        //     console.log('Response-1-1-1-1-1-1-1 =----launchCamera ', response);
+        //     if (!response.data) return false;
+        // });
         ImagePicker.showImagePicker(options, (response) => {
             console.log('Response-1-1-1-1-1-1-1 = ', response);
             if (!response.data) return false;
