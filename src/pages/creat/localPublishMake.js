@@ -454,6 +454,17 @@ export default class Me extends Component {
                                 indicator={ProgressBar}
                                 style={{ width: this.props.navigation.state.params.response.width, height: this.props.navigation.state.params.response.height }} />
                         </View>
+                        <TouchableOpacity
+                            style={{ alignItems: 'center', paddingTop: 15 }}
+                            onPress={() => this.setState({
+                                hasResult: false,
+                                creatButtonFlag: false
+                            })}
+                        >
+                            <View style={{ width: '50%', paddingTop: 10, height: 40, backgroundColor: '#f60', borderRadius: 8 }}>
+                                <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16 }}>重新生成表情</Text>
+                            </View>
+                        </TouchableOpacity>
                         <View style={{ paddingTop: 30,paddingBottom: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <TouchableOpacity
                                 style={{ flexDirection: 'row', marginLeft: 10 }}
