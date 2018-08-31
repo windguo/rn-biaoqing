@@ -288,7 +288,7 @@ export default class Me extends Component {
                                 <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, backgroundColor: 'white', justifyContent: 'space-between' }}>
                                     <View style={{ marginLeft: 20, flexDirection: 'row', alignItems: 'center' }}>
                                         <IconSimple name="cloud-upload" size={22} color={Color.FontColor} />
-                                        <Text style={{ marginLeft: 10 }}>本地图片生成</Text>
+                                        <Text style={{ marginLeft: 10 }}>拍照+选择相册</Text>
                                     </View>
                                     <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{ marginRight: 20 }} />
                                 </View>
