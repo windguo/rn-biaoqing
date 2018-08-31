@@ -18,6 +18,7 @@ import Detail from './pages/Detail';
 import web from './pages/web';
 import Home from './pages/Home';
 import ScrollTabView from './pages/ScrollTabView';
+import LocalPublish from './pages/LocalPublish';
 import ScrollTabViewRand from './pages/ScrollTabViewRand';
 import ScrollTabViewBiaoqingbao from './pages/ScrollTabViewBiaoqingbao';
 import ScrollTabViewTouxiang from './pages/ScrollTabViewTouxiang';
@@ -86,7 +87,6 @@ const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
     creatBiaoqingIndex: { screen: creatBiaoqingIndex },
     LocalBiaoqingCollection: { screen: LocalBiaoqingCollection },
-    // SearchTag: { screen: SearchTag },
     My:{screen: My},
 },{
     lazy: true,
@@ -108,6 +108,7 @@ const NavgationApp = StackNavigator({
     localPublishMake: { screen: localPublishMake },
     ScrollTabViewRand: { screen: ScrollTabViewRand },
     Touxiang: { screen: ScrollTabViewTouxiang },
+    LocalPublish: { screen: LocalPublish },
     creatBiaoqingIndex: {screen: creatBiaoqingIndex},
     Login: {screen: Login},
     creatBiaoqing: {screen: creatBiaoqing},
