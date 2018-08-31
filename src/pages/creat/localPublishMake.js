@@ -397,7 +397,7 @@ export default class Me extends Component {
                                     {...this.props}
                                 ></TextInput>
                                 {this.state.creatButtonFlag ?
-                                    <TouchableOpacity style={{ alignItems: 'center', marginTop: 20 }} activeOpacity={0.8} onPress={() => {
+                                    <TouchableOpacity style={{ alignItems: 'center',marginTop:20 }} activeOpacity={0.8} onPress={() => {
                                         // this.PostThumb();
                                     }}>
                                         <View style={{ width: '90%', paddingTop: 10, paddingLeft: 30, paddingRight: 30, height: 40, backgroundColor: '#ccc', borderRadius: 8 }}>
@@ -454,7 +454,18 @@ export default class Me extends Component {
                                 indicator={ProgressBar}
                                 style={{ width: this.props.navigation.state.params.response.width, height: this.props.navigation.state.params.response.height }} />
                         </View>
-                        <View style={{ paddingTop: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity
+                            style={{ alignItems: 'center', paddingTop: 15 }}
+                            onPress={() => this.setState({
+                                hasResult: false,
+                                creatButtonFlag: false
+                            })}
+                        >
+                            <View style={{ width: '50%', paddingTop: 10, height: 40, backgroundColor: '#f60', borderRadius: 8 }}>
+                                <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16 }}>重新生成表情</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <View style={{ paddingTop: 30,paddingBottom: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <TouchableOpacity
                                 style={{ flexDirection: 'row', marginLeft: 10 }}
                                 onPress={() => this.clickToShare('Session')}
