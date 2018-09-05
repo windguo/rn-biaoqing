@@ -132,6 +132,7 @@ export default class Me extends Component {
                 this._top = this.state.top
                 this._left = this.state.left
                 this.setState({ bg: 'red' })
+                this.scrool.setNativeProps({ scrollEnabled: false });
             },
             onPanResponderMove: (evt, gs) => {
                 console.log(gs.dx + ' ' + gs.dy)
@@ -139,6 +140,7 @@ export default class Me extends Component {
                     top: this._top + gs.dy,
                     left: this._left + gs.dx
                 })
+                this.scrool.setNativeProps({ scrollEnabled: false });
             },
             onPanResponderRelease: (evt, gs) => {
                 this.setState({
@@ -146,6 +148,7 @@ export default class Me extends Component {
                     top: this._top + gs.dy,
                     left: this._left + gs.dx
                 })
+                this.scrool.setNativeProps({ scrollEnabled: true });
             }
         })
     }
@@ -154,29 +157,6 @@ export default class Me extends Component {
         this.subscription.remove();
         this.keyboardDidShowListener.remove();
         this.keyboardDidHideListener.remove(); 
-        this._panResponder = PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponder: () => true,
-            onPanResponderGrant: () => {
-                this._top = this.state.top
-                this._left = this.state.left
-                this.setState({ bg: 'red' })
-            },
-            onPanResponderMove: (evt, gs) => {
-                console.log(gs.dx + ' ' + gs.dy)
-                this.setState({
-                    top: this._top + gs.dy,
-                    left: this._left + gs.dx
-                })
-            },
-            onPanResponderRelease: (evt, gs) => {
-                this.setState({
-                    bg: 'white',
-                    top: this._top + gs.dy,
-                    left: this._left + gs.dx
-                })
-            }
-        })
     }
     componentDidMount() {
         this.loadContentData();
@@ -316,7 +296,7 @@ export default class Me extends Component {
     render() {
         return (
             <KeyboardAvoidingView behavior='position' >
-                <ScrollView bounces={false}>
+                <ScrollView ref={(ref) => { this.scrool = ref }}>
                 <View style={styles.outerContainer}>
                     <View style={styles.container}>
                         <View style={{ alignItems: 'center', marginBottom: 10,paddingTop:15,paddingBottom:10,backgroundColor:'#f5f5f5',flex:1 }}>

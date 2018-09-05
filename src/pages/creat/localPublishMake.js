@@ -139,6 +139,7 @@ export default class Me extends Component {
                 this._top = this.state.top
                 this._left = this.state.left
                 this.setState({ bg: 'red' })
+                this.scrool.setNativeProps({ scrollEnabled: false });
             },
             onPanResponderMove: (evt, gs) => {
                 console.log(gs.dx + ' ' + gs.dy)
@@ -146,6 +147,7 @@ export default class Me extends Component {
                     top: this._top + gs.dy,
                     left: this._left + gs.dx
                 })
+                this.scrool.setNativeProps({ scrollEnabled: false });
             },
             onPanResponderRelease: (evt, gs) => {
                 this.setState({
@@ -153,35 +155,13 @@ export default class Me extends Component {
                     top: this._top + gs.dy,
                     left: this._left + gs.dx
                 })
+                this.scrool.setNativeProps({ scrollEnabled: true });
             }
         })
     }
     componentWillUnmount=()=> {
         this.keyboardDidShowListener.remove();
         this.keyboardDidHideListener.remove();
-        this._panResponder = PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponder: () => true,
-            onPanResponderGrant: () => {
-                this._top = this.state.top
-                this._left = this.state.left
-                this.setState({ bg: 'red' })
-            },
-            onPanResponderMove: (evt, gs) => {
-                console.log(gs.dx + ' ' + gs.dy)
-                this.setState({
-                    top: this._top + gs.dy,
-                    left: this._left + gs.dx
-                })
-            },
-            onPanResponderRelease: (evt, gs) => {
-                this.setState({
-                    bg: 'white',
-                    top: this._top + gs.dy,
-                    left: this._left + gs.dx
-                })
-            }
-        })
     }
     componentDidMount=()=> {
         console.log('base64Database64Database64Data==', this.state.base64Data);
@@ -345,7 +325,7 @@ export default class Me extends Component {
     renderUnCreat = () => {
         return (
             <KeyboardAvoidingView behavior='position' >
-                <ScrollView bounces={false} style={{backgroundColor:'#f5f5f5'}}>
+                <ScrollView ref={(ref) => { this.scrool = ref }} style={{backgroundColor:'#f5f5f5'}}>
                     <View style={styles.outerContainer}>
                         <View style={styles.container}>
                             <View style={{ alignItems: 'center', marginBottom: 10, paddingTop: 15, paddingBottom: 10, backgroundColor: '#f5f5f5', flex: 1 }}>
