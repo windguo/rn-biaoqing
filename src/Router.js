@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import {StackNavigator,TabNavigator} from 'react-navigation';
 import Detail from './pages/Detail';
+import add from './pages/Add';
 import web from './pages/web';
 import Home from './pages/Home';
 import ScrollTabView from './pages/ScrollTabView';
@@ -86,6 +87,7 @@ const _configureTransition = () => {
 const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
     creatBiaoqingIndex: { screen: creatBiaoqingIndex },
+    add: { screen: add },
     LocalBiaoqingCollection: { screen: LocalBiaoqingCollection },
     My:{screen: My},
 },{
@@ -112,6 +114,7 @@ const NavgationApp = StackNavigator({
     creatBiaoqingIndex: {screen: creatBiaoqingIndex},
     Login: {screen: Login},
     creatBiaoqing: {screen: creatBiaoqing},
+    add: {screen: add},
     creatBiaoqingResult: {screen: creatBiaoqingResult},
     Publish: {screen: Publish},
     TouxiangDetail: {screen: TouxiangDetail},
