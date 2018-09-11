@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
         }, {
                 top: Platform.OS === "ios" ? 24 : SCALE(StatusBarHeight())
             }),
-        // top: 3,
+        top: 5,
     },
 
 });

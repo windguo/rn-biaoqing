@@ -105,11 +105,11 @@ android {
     buildToolsVersion '26.0.2'
 
     defaultConfig {
-        applicationId "com.windguo.h8.vc.qianming"
+        applicationId "com.windguos.biaoqing"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0.5"
+        versionName "1.1.1"
         manifestPlaceholders = [
                 JPUSH_APPKEY: "b0fccf1d571ed454fb27f0af",
                 APP_CHANNEL : "default"
