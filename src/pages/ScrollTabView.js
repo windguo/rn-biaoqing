@@ -150,7 +150,7 @@ export  default  class ScrollTabView extends Component {
         }
         SplashScreen.hide();
         this.CodePushSync();
-        WeChat.registerApp('wx65594c1aaffccbb9');
+        WeChat.registerApp('wx92028a8f35226aff');
         this.props.navigation.setParams({
             rightFuc: () => {
                 this.props.navigation.navigate('LocalBiaoqingCollection')
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
         }, {
                 top: Platform.OS === "ios" ? 24 : SCALE(StatusBarHeight())
             }),
-        top: 5,
+        // top: 5,
     },
 
 });
