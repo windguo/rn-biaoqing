@@ -315,13 +315,21 @@ export default class Me extends Component {
     userNameInputTextChange = (text) => {
         this.setState({ username: text })
     }
-
+    pushToWeb = (params) => {
+        let url = '';
+        if (params === 'yjfk') {
+            url = urlConfig.suggestURL;
+        } else if (params === 'yhsyxy') {
+            url = urlConfig.agreementURL;
+        }
+        this.props.navigation.navigate('Web', { url: url });
+    }
     render (){
         return (
             <KeyboardAwareScrollView
                 enableOnAndroid={false}>
                 <ScrollView style={{width: WIDTH, flex: 1 }} contentContainerStyle={{ alignItems: 'center' }}>
-                    <Text style={{padding: 10,marginTop:50,color:'#999' }}>您发布的内容会在24小时内审核。</Text>
+                    <Text style={{padding: 10,marginTop:40,color:'#999' }}>您发布的内容会在24小时内审核。</Text>
                     <View style={{ marginTop: HEIGHT * 0.06, width: WIDTH, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <TextInput
                             numberOfLines={1}
@@ -355,11 +363,16 @@ export default class Me extends Component {
                             }
                         </View>
                     </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={1} onPress={() => { this.pushToWeb('yhsyxy') }}>
+                        <View style={{paddingTop:20}}>
+                            <Text style={{color:"#999"}}>阅读用户使用协议</Text>
+                        </View>
+                    </TouchableOpacity>
                     <TouchableOpacity style={{
                         width: WIDTH,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        marginTop: 40,
+                        marginTop: 20,
                     }} activeOpacity={0.7} onPress={this.loginButtonPress}>
                         <View style={{
                             width: WIDTH - 80,
@@ -369,7 +382,7 @@ export default class Me extends Component {
                             alignItems: 'center',
                             backgroundColor: '#f60'
                         }}>
-                            <Text style={{ fontSize: FONT(18), paddingTop: 10, paddingBottom: 10, backgroundColor: 'transparent', color: 'white', textAlign: 'center' }}>立即发布</Text>
+                            <Text style={{ fontSize: FONT(18), paddingTop: 10, paddingBottom: 10, backgroundColor: 'transparent', color: 'white', textAlign: 'center' }}>同意用户协议并发布内容</Text>
                         </View>
                     </TouchableOpacity>
                 </ScrollView>

@@ -36,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>3</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -52,13 +52,13 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>App需要访问您的摄像头</string>
+	<string>App需要访问您的摄像头，为您开启拍照功能，方便您上传图片。</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>App需要打开您的相册</string>
+	<string>App需要打开您的相册，为您开启获取本地照片功能，方便您上传图片。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>App需要打开您的相册</string>
+	<string>App需要打开您的相册，为您开启获取本地照片功能，方便您上传图片。</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
