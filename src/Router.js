@@ -87,7 +87,7 @@ const _configureTransition = () => {
 const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
     creatBiaoqingIndex: { screen: creatBiaoqingIndex },
-    add: { screen: add },
+    // add: { screen: add },
     LocalBiaoqingCollection: { screen: LocalBiaoqingCollection },
     My:{screen: My},
 },{
